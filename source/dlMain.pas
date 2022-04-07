@@ -6,13 +6,17 @@ unit dlMain;
 interface
 
 uses
+  // FCL + LCL
   Classes, SysUtils, contnrs, FileUtil, IniFiles, Graphics, Controls, Types,
   StdCtrls, ExtCtrls, ComCtrls, Forms, Dialogs, Menus, ActnList, StdActns,
   Grids, Buttons,
+  // TAChart
   TAGraph, TACustomSeries, TASeries, TASources, TACustomSource,
   TAIntervalSources, TATypes, TAChartImageList, TATransformations,
   TAChartListbox, TALegend, TATools,
+  // other
   synaser, MRUManager,
+  // project
   dlGlobal, dlData, dlSerialDevice, dlLEDCtrl;
 
 type
