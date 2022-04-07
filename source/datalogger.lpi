@@ -1,0 +1,183 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CONFIG>
+  <ProjectOptions>
+    <Version Value="12"/>
+    <PathDelim Value="\"/>
+    <General>
+      <Flags>
+        <CompatibilityMode Value="True"/>
+      </Flags>
+      <SessionStorage Value="InProjectDir"/>
+      <Title Value="datalogger"/>
+      <ResourceType Value="res"/>
+      <UseXPManifest Value="True"/>
+      <Icon Value="0"/>
+    </General>
+    <i18n>
+      <EnableI18N LFM="False"/>
+    </i18n>
+    <BuildModes Count="1">
+      <Item1 Name="Default" Default="True"/>
+    </BuildModes>
+    <PublishOptions>
+      <Version Value="2"/>
+    </PublishOptions>
+    <RunParams>
+      <FormatVersion Value="2"/>
+      <Modes Count="1">
+        <Mode0 Name="default"/>
+      </Modes>
+    </RunParams>
+    <RequiredPackages Count="5">
+      <Item1>
+        <PackageName Value="TAChartLazarusPkg"/>
+      </Item1>
+      <Item2>
+        <PackageName Value="industrial"/>
+      </Item2>
+      <Item3>
+        <PackageName Value="laz_fpspreadsheet"/>
+      </Item3>
+      <Item4>
+        <PackageName Value="laz_synapse"/>
+      </Item4>
+      <Item5>
+        <PackageName Value="LCL"/>
+      </Item5>
+    </RequiredPackages>
+    <Units Count="16">
+      <Unit0>
+        <Filename Value="DataLogger.lpr"/>
+        <IsPartOfProject Value="True"/>
+      </Unit0>
+      <Unit1>
+        <Filename Value="dlMain.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="MainForm"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Form"/>
+      </Unit1>
+      <Unit2>
+        <Filename Value="dlserialdevice.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="dlSerialDevice"/>
+      </Unit2>
+      <Unit3>
+        <Filename Value="vc820device.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="VC820device"/>
+      </Unit3>
+      <Unit4>
+        <Filename Value="vc830device.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="VC830Device"/>
+      </Unit4>
+      <Unit5>
+        <Filename Value="dlGlobal.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit5>
+      <Unit6>
+        <Filename Value="dlutils.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="dlUtils"/>
+      </Unit6>
+      <Unit7>
+        <Filename Value="dldata.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="dlData"/>
+      </Unit7>
+      <Unit8>
+        <Filename Value="dltransformations.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="TransformationForm"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Form"/>
+        <UnitName Value="dlTransformations"/>
+      </Unit8>
+      <Unit9>
+        <Filename Value="dltransformationeditor.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="TransformationEditor"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Form"/>
+        <UnitName Value="dlTransformationEditor"/>
+      </Unit9>
+      <Unit10>
+        <Filename Value="mrumanager.pp"/>
+        <IsPartOfProject Value="True"/>
+      </Unit10>
+      <Unit11>
+        <Filename Value="dlTimeOffsetDialog.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="TimeOffsetForm"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Form"/>
+      </Unit11>
+      <Unit12>
+        <Filename Value="dlListViewDialog.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="ListViewForm"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Form"/>
+      </Unit12>
+      <Unit13>
+        <Filename Value="dlremovecurvedialog.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="RemoveCurvesForm"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Form"/>
+        <UnitName Value="dlRemoveCurveDialog"/>
+      </Unit13>
+      <Unit14>
+        <Filename Value="dlmeassettingsdialog.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="MeasSettingsForm"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Form"/>
+        <UnitName Value="dlMeasSettingsDialog"/>
+      </Unit14>
+      <Unit15>
+        <Filename Value="dlseriesstyleeditor.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="SeriesStyleEditor"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Form"/>
+        <UnitName Value="dlSeriesStyleEditor"/>
+      </Unit15>
+    </Units>
+  </ProjectOptions>
+  <CompilerOptions>
+    <Version Value="11"/>
+    <PathDelim Value="\"/>
+    <Target>
+      <Filename Value="..\bin\$(TargetCPU)-$(TargetOS)\datalogger"/>
+    </Target>
+    <SearchPaths>
+      <IncludeFiles Value="$(ProjOutDir)"/>
+      <UnitOutputDirectory Value="..\ppu\$(TargetCPU)-$(TargetOS)"/>
+    </SearchPaths>
+    <Linking>
+      <Debugging>
+        <DebugInfoType Value="dsDwarf2"/>
+      </Debugging>
+      <Options>
+        <Win32>
+          <GraphicApplication Value="True"/>
+        </Win32>
+      </Options>
+    </Linking>
+  </CompilerOptions>
+  <Debugging>
+    <Exceptions Count="3">
+      <Item1>
+        <Name Value="EAbort"/>
+      </Item1>
+      <Item2>
+        <Name Value="ECodetoolError"/>
+      </Item2>
+      <Item3>
+        <Name Value="EFOpenError"/>
+      </Item3>
+    </Exceptions>
+  </Debugging>
+</CONFIG>

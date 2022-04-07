@@ -1,0 +1,80 @@
+inherited TimeOffsetForm: TTimeOffsetForm
+  Left = 452
+  Height = 329
+  Top = 144
+  Width = 432
+  Caption = 'TimeOffsetForm'
+  ClientHeight = 329
+  ClientWidth = 432
+  OnCreate = FormCreate
+  OnShow = FormShow
+  inherited Panel_ListView: TPanel
+    Height = 283
+    Width = 432
+    ClientHeight = 283
+    ClientWidth = 432
+    inherited ListView: TListView
+      Height = 275
+      Width = 424
+      Columns = <      
+        item
+          Caption = 'Curves'
+          Width = 350
+        end      
+        item
+          Alignment = taRightJustify
+          Caption = 'Offset'
+          Width = 70
+        end>
+      OnSelectItem = ListViewSelectItem
+    end
+  end
+  inherited Panel_Buttons: TPanel
+    Top = 283
+    Width = 432
+    ClientWidth = 432
+    inherited BtnOK: TBitBtn
+      Left = 266
+      Default = False
+    end
+    inherited BtnCancel: TBitBtn
+      Left = 346
+      Cancel = False
+    end
+    object EdOffset: TFloatSpinEdit[2]
+      Left = 104
+      Height = 23
+      Top = 8
+      Width = 72
+      Increment = 1
+      MaxValue = 1E308
+      MinValue = -1E308
+      OnChange = EdOffsetChange
+      TabOrder = 2
+      Value = 0
+    end
+    object LblTimeOffset: TLabel[3]
+      Left = 16
+      Height = 15
+      Top = 11
+      Width = 60
+      Alignment = taRightJustify
+      Caption = 'Time offset'
+      FocusControl = EdOffset
+      ParentColor = False
+    end
+    object LblTimeOffsetUnits: TLabel[4]
+      Left = 184
+      Height = 15
+      Top = 11
+      Width = 17
+      Caption = 'sec'
+      FocusControl = EdOffset
+      ParentColor = False
+    end
+  end
+  inherited ImageList: TImageList
+    BkColor = clNone
+    DrawingStyle = dsNormal
+  end
+end

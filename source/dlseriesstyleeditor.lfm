@@ -1,0 +1,279 @@
+object SeriesStyleEditor: TSeriesStyleEditor
+  Left = 611
+  Height = 396
+  Top = 221
+  Width = 287
+  BorderStyle = bsDialog
+  Caption = 'Series style editor'
+  ClientHeight = 396
+  ClientWidth = 287
+  Position = poMainFormCenter
+  LCLVersion = '1.7'
+  object Panel1: TPanel
+    Left = 0
+    Height = 342
+    Top = 0
+    Width = 287
+    Align = alClient
+    AutoSize = True
+    BevelOuter = bvNone
+    ClientHeight = 342
+    ClientWidth = 287
+    TabOrder = 0
+    object GbLines: TGroupBox
+      AnchorSideLeft.Control = Panel1
+      AnchorSideTop.Control = Panel1
+      Left = 12
+      Height = 158
+      Top = 12
+      Width = 262
+      BorderSpacing.Around = 12
+      Caption = 'Lines'
+      ClientHeight = 138
+      ClientWidth = 258
+      Font.Style = [fsBold]
+      ParentFont = False
+      TabOrder = 0
+      object LblLineColor: TLabel
+        AnchorSideLeft.Control = CbShowLines
+        AnchorSideTop.Control = CbLineColor
+        AnchorSideTop.Side = asrCenter
+        Left = 16
+        Height = 15
+        Top = 72
+        Width = 52
+        Caption = 'Line color'
+        FocusControl = CbLineColor
+        ParentColor = False
+        ParentFont = False
+      end
+      object CbLineColor: TColorBox
+        AnchorSideLeft.Control = CbLineStyle
+        AnchorSideTop.Control = CbLineStyle
+        AnchorSideTop.Side = asrBottom
+        Left = 108
+        Height = 24
+        Top = 67
+        Width = 134
+        ColorRectWidth = 32
+        Style = [cbStandardColors, cbExtendedColors, cbCustomColor, cbPrettyNames]
+        BorderSpacing.Top = 8
+        DropDownCount = 24
+        ItemHeight = 18
+        ParentFont = False
+        TabOrder = 1
+      end
+      object LblLineStyle: TLabel
+        AnchorSideLeft.Control = CbShowLines
+        AnchorSideTop.Control = CbLineStyle
+        AnchorSideTop.Side = asrCenter
+        Left = 16
+        Height = 15
+        Top = 40
+        Width = 49
+        Caption = 'Line style'
+        ParentColor = False
+        ParentFont = False
+      end
+      object LblLineWidth: TLabel
+        AnchorSideLeft.Control = CbShowLines
+        AnchorSideTop.Control = EdLineWidth
+        AnchorSideTop.Side = asrCenter
+        Left = 16
+        Height = 15
+        Top = 103
+        Width = 55
+        Caption = 'Line width'
+        FocusControl = EdLineWidth
+        ParentColor = False
+        ParentFont = False
+      end
+      object EdLineWidth: TSpinEdit
+        AnchorSideLeft.Control = CbLineStyle
+        AnchorSideTop.Control = CbLineColor
+        AnchorSideTop.Side = asrBottom
+        Left = 108
+        Height = 23
+        Top = 99
+        Width = 58
+        BorderSpacing.Top = 8
+        BorderSpacing.Bottom = 16
+        MaxValue = 10
+        MinValue = 1
+        ParentFont = False
+        TabOrder = 2
+        Value = 1
+      end
+      object CbShowLines: TCheckBox
+        AnchorSideLeft.Control = GbLines
+        AnchorSideTop.Control = GbLines
+        Left = 16
+        Height = 19
+        Top = 8
+        Width = 49
+        BorderSpacing.Left = 16
+        BorderSpacing.Top = 8
+        Caption = 'Show'
+        OnChange = CbShowLinesChange
+        ParentFont = False
+        TabOrder = 0
+      end
+      object CbLineStyle: TChartComboBox
+        AnchorSideLeft.Control = GbLines
+        AnchorSideTop.Control = CbShowLines
+        AnchorSideTop.Side = asrBottom
+        Left = 108
+        Height = 24
+        Top = 35
+        Width = 134
+        PenPattern = '1|1'
+        PointerStyle = psNone
+        BorderSpacing.Left = 108
+        BorderSpacing.Top = 8
+        BorderSpacing.Right = 16
+        ItemHeight = 16
+        ItemIndex = 0
+        ParentFont = False
+        TabOrder = 3
+      end
+    end
+    object GbSymbols: TGroupBox
+      AnchorSideLeft.Control = Panel1
+      AnchorSideTop.Control = GbLines
+      AnchorSideTop.Side = asrBottom
+      Left = 12
+      Height = 159
+      Top = 182
+      Width = 262
+      BorderSpacing.Around = 12
+      Caption = 'Symbols'
+      ClientHeight = 139
+      ClientWidth = 258
+      Font.Style = [fsBold]
+      ParentFont = False
+      TabOrder = 1
+      object LblSymbolColor: TLabel
+        AnchorSideLeft.Control = CbShowSymbols
+        AnchorSideTop.Control = CbSymbolColor
+        AnchorSideTop.Side = asrCenter
+        Left = 16
+        Height = 15
+        Top = 72
+        Width = 70
+        Caption = 'Symbol color'
+        FocusControl = CbSymbolColor
+        ParentColor = False
+        ParentFont = False
+      end
+      object CbSymbolColor: TColorBox
+        AnchorSideLeft.Control = CbSymbol
+        AnchorSideTop.Control = CbSymbol
+        AnchorSideTop.Side = asrBottom
+        Left = 108
+        Height = 24
+        Top = 67
+        Width = 134
+        ColorRectWidth = 32
+        Style = [cbStandardColors, cbExtendedColors, cbCustomColor, cbPrettyNames]
+        BorderSpacing.Top = 8
+        DropDownCount = 24
+        ItemHeight = 18
+        ParentFont = False
+        TabOrder = 1
+      end
+      object LblSymbol: TLabel
+        AnchorSideLeft.Control = CbShowSymbols
+        AnchorSideTop.Control = CbSymbol
+        AnchorSideTop.Side = asrCenter
+        Left = 16
+        Height = 15
+        Top = 40
+        Width = 40
+        Caption = 'Symbol'
+        ParentColor = False
+        ParentFont = False
+      end
+      object LblBorderColor: TLabel
+        AnchorSideLeft.Control = CbShowSymbols
+        AnchorSideTop.Control = CbSymbolBorderColor
+        AnchorSideTop.Side = asrCenter
+        Left = 16
+        Height = 15
+        Top = 104
+        Width = 65
+        Caption = 'Border color'
+        FocusControl = CbSymbolBorderColor
+        ParentColor = False
+        ParentFont = False
+      end
+      object CbSymbolBorderColor: TColorBox
+        AnchorSideLeft.Control = CbSymbol
+        AnchorSideTop.Control = CbSymbolColor
+        AnchorSideTop.Side = asrBottom
+        Left = 108
+        Height = 24
+        Top = 99
+        Width = 134
+        ColorRectWidth = 32
+        Style = [cbStandardColors, cbExtendedColors, cbCustomColor, cbPrettyNames]
+        BorderSpacing.Top = 8
+        BorderSpacing.Bottom = 16
+        DropDownCount = 24
+        ItemHeight = 18
+        ParentFont = False
+        TabOrder = 2
+      end
+      object CbShowSymbols: TCheckBox
+        AnchorSideLeft.Control = GbSymbols
+        AnchorSideTop.Control = GbSymbols
+        Left = 16
+        Height = 19
+        Top = 8
+        Width = 49
+        BorderSpacing.Left = 16
+        BorderSpacing.Top = 8
+        Caption = 'Show'
+        OnChange = CbShowSymbolsChange
+        ParentFont = False
+        TabOrder = 0
+      end
+      object CbSymbol: TChartComboBox
+        AnchorSideLeft.Control = GbSymbols
+        AnchorSideTop.Control = CbShowSymbols
+        AnchorSideTop.Side = asrBottom
+        Left = 108
+        Height = 24
+        Top = 35
+        Width = 134
+        Mode = ccmPointerStyle
+        PenPattern = '1|1'
+        PointerStyle = psNone
+        BorderSpacing.Left = 108
+        BorderSpacing.Top = 8
+        BorderSpacing.Right = 16
+        ItemHeight = 16
+        ItemIndex = 0
+        ParentFont = False
+        TabOrder = 3
+      end
+    end
+  end
+  object ButtonPanel1: TButtonPanel
+    AnchorSideTop.Control = Owner
+    Left = 6
+    Height = 34
+    Top = 356
+    Width = 275
+    BorderSpacing.Top = 8
+    OKButton.Name = 'OKButton'
+    OKButton.DefaultCaption = True
+    HelpButton.Name = 'HelpButton'
+    HelpButton.DefaultCaption = True
+    CloseButton.Name = 'CloseButton'
+    CloseButton.DefaultCaption = True
+    CancelButton.Name = 'CancelButton'
+    CancelButton.DefaultCaption = True
+    TabOrder = 1
+    ShowButtons = [pbOK, pbCancel]
+  end
+end
