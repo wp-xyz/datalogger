@@ -7,24 +7,26 @@ object ListViewForm: TListViewForm
   ClientHeight = 327
   ClientWidth = 413
   OnShow = FormShow
-  LCLVersion = '1.3'
+  LCLVersion = '2.3.0.0'
   object Panel_ListView: TPanel
     Left = 0
-    Height = 281
+    Height = 289
     Top = 0
     Width = 413
     Align = alClient
     BevelOuter = bvNone
-    ClientHeight = 281
+    ClientHeight = 289
     ClientWidth = 413
     TabOrder = 0
     object ListView: TListView
-      Left = 4
-      Height = 273
-      Top = 4
-      Width = 405
+      Left = 6
+      Height = 283
+      Top = 6
+      Width = 401
       Align = alClient
-      BorderSpacing.Around = 4
+      BorderSpacing.Left = 6
+      BorderSpacing.Top = 6
+      BorderSpacing.Right = 6
       Columns = <      
         item
           Caption = 'Curves'
@@ -37,20 +39,25 @@ object ListViewForm: TListViewForm
   end
   object Panel_Buttons: TPanel
     Left = 0
-    Height = 46
-    Top = 281
+    Height = 38
+    Top = 289
     Width = 413
     Align = alBottom
+    AutoSize = True
     BevelOuter = bvNone
-    ClientHeight = 46
+    ClientHeight = 38
     ClientWidth = 413
     TabOrder = 1
     object BtnOK: TBitBtn
-      Left = 247
-      Height = 28
-      Top = 8
-      Width = 75
+      AnchorSideTop.Control = Panel_Buttons
+      AnchorSideRight.Control = BtnCancel
+      Left = 253
+      Height = 26
+      Top = 6
+      Width = 66
       Anchors = [akTop, akRight]
+      AutoSize = True
+      BorderSpacing.Around = 6
       Default = True
       DefaultCaption = True
       Kind = bkOK
@@ -59,11 +66,16 @@ object ListViewForm: TListViewForm
       TabOrder = 0
     end
     object BtnCancel: TBitBtn
-      Left = 327
-      Height = 28
-      Top = 8
-      Width = 75
+      AnchorSideTop.Control = Panel_Buttons
+      AnchorSideRight.Control = Panel_Buttons
+      AnchorSideRight.Side = asrBottom
+      Left = 325
+      Height = 26
+      Top = 6
+      Width = 82
       Anchors = [akTop, akRight]
+      AutoSize = True
+      BorderSpacing.Around = 6
       Cancel = True
       DefaultCaption = True
       Kind = bkCancel
@@ -74,7 +86,7 @@ object ListViewForm: TListViewForm
   object ImageList: TImageList
     BkColor = clWhite
     DrawingStyle = dsTransparent
-    left = 172
-    top = 112
+    Left = 172
+    Top = 112
   end
 end

@@ -40,7 +40,7 @@ type
 
   { TSerPortForm }
   TSerPortForm = class(TForm)
-    BottomBevel : TBevel;
+    PortDeviceBevel : TBevel;
     ButtonPanel: TButtonPanel;
     CbBaudRate : TComboBox;
     CbPort : TComboBox;
@@ -50,10 +50,10 @@ type
     CbDatabits : TComboBox;
     CbReadout: TComboBox;
     LblBaudRate : TLabel;
-    LblDatabits1: TLabel;
+    LblDisplayDigits: TLabel;
     LblParity : TLabel;
     LblDatabits : TLabel;
-    LblPort1: TLabel;
+    LblDevice: TLabel;
     LblStopBits : TLabel;
     LblPort : TLabel;
     LblReadout: TLabel;
@@ -61,6 +61,7 @@ type
     RgHandshake: TRadioGroup;
     EdDigits: TSpinEdit;
     procedure CbDeviceChange(Sender: TObject);
+    procedure FormActivate(Sender: TObject);
     procedure FormCloseQuery(Sender: TObject; var CanClose: boolean);
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
@@ -272,6 +273,11 @@ begin
 
   FPrevPresetItem.Assign(item);
   FPrevIndex := CbDevice.ItemIndex;
+end;
+
+procedure TSerPortForm.FormActivate(Sender: TObject);
+begin
+  Constraints.MinHeight := MainPanel.Height + ButtonPanel.Height;
 end;
 
 procedure TSerPortForm.FormCloseQuery(Sender: TObject; var CanClose: boolean);

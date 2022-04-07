@@ -156,7 +156,7 @@
         <PackageName Value="LCL"/>
       </Item4>
     </RequiredPackages>
-    <Units Count="17">
+    <Units Count="18">
       <Unit0>
         <Filename Value="DataLogger.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -259,6 +259,13 @@
         <Filename Value="dlLEDCtrl.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit16>
+      <Unit17>
+        <Filename Value="dlSerialPortSettings.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="SerPortForm"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Form"/>
+      </Unit17>
     </Units>
   </ProjectOptions>
   <CompilerOptions>

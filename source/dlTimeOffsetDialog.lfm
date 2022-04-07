@@ -9,13 +9,13 @@ inherited TimeOffsetForm: TTimeOffsetForm
   OnCreate = FormCreate
   OnShow = FormShow
   inherited Panel_ListView: TPanel
-    Height = 283
+    Height = 291
     Width = 432
-    ClientHeight = 283
+    ClientHeight = 291
     ClientWidth = 432
     inherited ListView: TListView
-      Height = 275
-      Width = 424
+      Height = 285
+      Width = 420
       Columns = <      
         item
           Caption = 'Curves'
@@ -30,41 +30,55 @@ inherited TimeOffsetForm: TTimeOffsetForm
     end
   end
   inherited Panel_Buttons: TPanel
-    Top = 283
+    Top = 291
     Width = 432
     ClientWidth = 432
     inherited BtnOK: TBitBtn
-      Left = 266
+      Left = 272
       Default = False
     end
     inherited BtnCancel: TBitBtn
-      Left = 346
+      Left = 344
       Cancel = False
     end
     object EdOffset: TFloatSpinEdit[2]
-      Left = 104
+      AnchorSideLeft.Control = LblTimeOffset
+      AnchorSideLeft.Side = asrBottom
+      AnchorSideTop.Control = Panel_Buttons
+      AnchorSideTop.Side = asrCenter
+      Left = 73
       Height = 23
       Top = 8
       Width = 72
+      BorderSpacing.Left = 8
+      BorderSpacing.Right = 8
       MaxValue = 1E308
       MinValue = -1E308
       OnChange = EdOffsetChange
       TabOrder = 2
     end
     object LblTimeOffset: TLabel[3]
-      Left = 16
+      AnchorSideLeft.Control = Panel_Buttons
+      AnchorSideTop.Control = Panel_Buttons
+      AnchorSideTop.Side = asrCenter
+      Left = 6
       Height = 15
-      Top = 11
+      Top = 12
       Width = 59
       Alignment = taRightJustify
+      BorderSpacing.Left = 6
       Caption = 'Time offset'
       FocusControl = EdOffset
       ParentColor = False
     end
     object LblTimeOffsetUnits: TLabel[4]
-      Left = 184
+      AnchorSideLeft.Control = EdOffset
+      AnchorSideLeft.Side = asrBottom
+      AnchorSideTop.Control = Panel_Buttons
+      AnchorSideTop.Side = asrCenter
+      Left = 153
       Height = 15
-      Top = 11
+      Top = 12
       Width = 17
       Caption = 'sec'
       FocusControl = EdOffset

@@ -7,36 +7,40 @@ inherited RemoveCurvesForm: TRemoveCurvesForm
   ClientHeight = 395
   ClientWidth = 512
   inherited Panel_ListView: TPanel
-    Height = 349
+    Height = 357
     Width = 512
-    ClientHeight = 349
+    ClientHeight = 357
     ClientWidth = 512
     inherited ListView: TListView
-      Height = 341
-      Width = 504
+      Height = 351
+      Width = 500
       AutoWidthLastColumn = True
       Columns = <      
         item
           Caption = 'Curves'
-          Width = 500
+          Width = 496
         end>
     end
   end
   inherited Panel_Buttons: TPanel
-    Top = 349
+    Top = 357
     Width = 512
     ClientWidth = 512
     inherited BtnOK: TBitBtn
-      Left = 346
+      Left = 352
     end
     inherited BtnCancel: TBitBtn
-      Left = 426
+      Left = 424
     end
     object CbReassignLineColors: TCheckBox[2]
-      Left = 9
+      AnchorSideLeft.Control = Panel_Buttons
+      AnchorSideTop.Control = Panel_Buttons
+      AnchorSideTop.Side = asrCenter
+      Left = 6
       Height = 19
-      Top = 13
+      Top = 10
       Width = 126
+      BorderSpacing.Left = 6
       Caption = 'Re-assign line colors'
       TabOrder = 2
     end

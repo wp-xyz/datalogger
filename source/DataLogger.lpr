@@ -9,8 +9,9 @@ uses
   Interfaces, // this includes the LCL widgetset
   Forms, tachartlazaruspkg, laz_fpspreadsheet, dlMain, dlSerialDevice,
   VC820device, VC830Device, dlGlobal, dlUtils, dlData, dlTransformations,
-dlTransformationEditor, mrumanager, dlTimeOffsetDialog, dlListViewDialog,
-dlRemoveCurveDialog, dlMeasSettingsDialog, dlseriesstyleeditor, dlLEDCtrl
+  dlTransformationEditor, mrumanager, dlTimeOffsetDialog, dlListViewDialog,
+  dlRemoveCurveDialog, dlMeasSettingsDialog, dlseriesstyleeditor, dlLEDCtrl,
+  dlSerialPortSettings
   { you can add units after this };
 
 {$R *.res}

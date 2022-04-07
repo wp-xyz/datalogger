@@ -2,22 +2,27 @@ object TransformationForm: TTransformationForm
   Left = 338
   Height = 342
   Top = 153
-  Width = 542
+  Width = 530
   Caption = 'Transformations'
   ClientHeight = 342
-  ClientWidth = 542
+  ClientWidth = 530
   Constraints.MinHeight = 110
   Constraints.MinWidth = 445
   OnCreate = FormCreate
   OnDestroy = FormDestroy
   LCLVersion = '2.3.0.0'
   object TransformationsListView: TListView
-    Left = 4
-    Height = 293
-    Top = 4
-    Width = 534
+    AnchorSideLeft.Control = Owner
+    AnchorSideTop.Control = Owner
+    AnchorSideRight.Control = Owner
+    AnchorSideRight.Side = asrBottom
+    Left = 6
+    Height = 289
+    Top = 6
+    Width = 518
     Align = alClient
-    BorderSpacing.Around = 4
+    AutoWidthLastColumn = True
+    BorderSpacing.Around = 6
     Columns = <    
       item
         Caption = 'Name'
@@ -25,7 +30,7 @@ object TransformationForm: TTransformationForm
       end    
       item
         Caption = 'Expression'
-        Width = 200
+        Width = 180
       end    
       item
         Caption = 'Quantity'
@@ -33,7 +38,7 @@ object TransformationForm: TTransformationForm
       end    
       item
         Caption = 'Units'
-        Width = 80
+        Width = 84
       end>
     HideSelection = False
     ReadOnly = True
@@ -46,18 +51,22 @@ object TransformationForm: TTransformationForm
     Left = 0
     Height = 41
     Top = 301
-    Width = 542
+    Width = 530
     Align = alBottom
     BevelOuter = bvNone
     ClientHeight = 41
-    ClientWidth = 542
+    ClientWidth = 530
     TabOrder = 1
     object BtnOK: TBitBtn
-      Left = 367
+      AnchorSideTop.Control = Bevel1
+      AnchorSideTop.Side = asrBottom
+      AnchorSideRight.Control = BtnCancel
+      Left = 354
       Height = 26
-      Top = 8
+      Top = 9
       Width = 82
       Anchors = [akTop, akRight]
+      BorderSpacing.Around = 6
       Default = True
       DefaultCaption = True
       Kind = bkOK
@@ -67,11 +76,16 @@ object TransformationForm: TTransformationForm
       TabOrder = 3
     end
     object BtnCancel: TBitBtn
-      Left = 455
+      AnchorSideTop.Control = Bevel1
+      AnchorSideTop.Side = asrBottom
+      AnchorSideRight.Control = Panel1
+      AnchorSideRight.Side = asrBottom
+      Left = 442
       Height = 26
-      Top = 8
+      Top = 9
       Width = 82
       Anchors = [akTop, akRight]
+      BorderSpacing.Around = 6
       Cancel = True
       DefaultCaption = True
       Kind = bkCancel
@@ -79,10 +93,14 @@ object TransformationForm: TTransformationForm
       TabOrder = 4
     end
     object BtnAdd: TBitBtn
-      Left = 8
+      AnchorSideLeft.Control = Panel1
+      AnchorSideTop.Control = Bevel1
+      AnchorSideTop.Side = asrBottom
+      Left = 6
       Height = 26
-      Top = 8
+      Top = 9
       Width = 82
+      BorderSpacing.Around = 6
       Caption = 'Add...'
       Glyph.Data = {
         36040000424D3604000000000000360000002800000010000000100000000100
@@ -124,10 +142,15 @@ object TransformationForm: TTransformationForm
       TabOrder = 0
     end
     object BtnEdit: TBitBtn
-      Left = 96
+      AnchorSideLeft.Control = BtnAdd
+      AnchorSideLeft.Side = asrBottom
+      AnchorSideTop.Control = Bevel1
+      AnchorSideTop.Side = asrBottom
+      Left = 94
       Height = 26
-      Top = 8
+      Top = 9
       Width = 82
+      BorderSpacing.Around = 6
       Caption = 'Edit...'
       Glyph.Data = {
         36040000424D3604000000000000360000002800000010000000100000000100
@@ -169,10 +192,15 @@ object TransformationForm: TTransformationForm
       TabOrder = 1
     end
     object BtnDelete: TBitBtn
-      Left = 184
+      AnchorSideLeft.Control = BtnEdit
+      AnchorSideLeft.Side = asrBottom
+      AnchorSideTop.Control = Bevel1
+      AnchorSideTop.Side = asrBottom
+      Left = 182
       Height = 26
-      Top = 8
+      Top = 9
       Width = 82
+      BorderSpacing.Around = 6
       Caption = 'Delete'
       Glyph.Data = {
         36040000424D3604000000000000360000002800000010000000100000000100
@@ -214,13 +242,17 @@ object TransformationForm: TTransformationForm
       TabOrder = 2
     end
     object Bevel1: TBevel
-      Left = 8
+      AnchorSideLeft.Control = Panel1
+      AnchorSideTop.Control = Panel1
+      AnchorSideRight.Control = Panel1
+      AnchorSideRight.Side = asrBottom
+      Left = 6
       Height = 3
       Top = 0
-      Width = 526
+      Width = 518
       Align = alTop
-      BorderSpacing.Left = 8
-      BorderSpacing.Right = 8
+      BorderSpacing.Left = 6
+      BorderSpacing.Right = 6
       Shape = bsBottomLine
     end
   end

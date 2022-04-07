@@ -576,23 +576,24 @@ begin
   end;
 end;
 
+
 procedure TMainForm.AcSeriesLinesAndSymbolsExecute(Sender: TObject);
-//var
-//  i: Integer;
-begin                       (*
+var
+  i: Integer;
+begin               
   if AcSeriesLinesOnly.Checked then
-    DiagramSettings.SeriesStyle := ssLines
+    DiagramSettings.SeriesSettings[0].Style := ssLines
   else
   if AcSeriesSymbolsOnly.Checked then
-    DiagramSettings.SeriesStyle := ssSymbols
+    DiagramSettings.SeriesSettings[0].Style := ssSymbols
   else
   if AcSeriesLinesAndSymbols.Checked then
-    DiagramSettings.SeriesStyle := ssBoth;
+    DiagramSettings.SeriesSettings[0].Style := ssBoth;
 
   with MeasSeries do begin
-    ShowLines := DiagramSettings.SeriesStyle in [ssLines, ssBoth];
-    ShowPoints := DiagramSettings.SeriesStyle in [ssSymbols, ssBoth];
-  end;                        *)
+    ShowLines := DiagramSettings.SeriesSettings[0].Style in [ssLines, ssBoth];
+    ShowPoints := DiagramSettings.SeriesSettings[0].Style in [ssSymbols, ssBoth];
+  end;               
 end;
 
 
@@ -998,12 +999,6 @@ begin
   PopulateLogSource;
   Chart.Hint := '|' + SMouseInfo;
 
-                               {
-  Chart.Extent.XMax := X_AXIS_GROWTH_SEC;
-  Chart.Extent.UseXMax := true;
-  Chart.Extent.UseXMin := true;
-                                }
-
   DataGrid.ColWidths[1] := 100;
   DataGrid.ColWidths[2] := 100;
   DataGrid.ColWidths[3] := 100;
@@ -1041,7 +1036,7 @@ begin
 
 //  Coolbar.Bands[2].Text := 'Transformations';
   Coolbar.AutosizeBands;
-
+  
   UpdateCmdStates;
 end;
 

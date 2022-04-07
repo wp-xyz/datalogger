@@ -1,82 +1,120 @@
 object SerPortForm: TSerPortForm
   Left = 622
-  Height = 344
+  Height = 362
   Top = 261
-  Width = 334
+  Width = 326
   ActiveControl = CbPort
+  AutoSize = True
   BorderIcons = [biSystemMenu]
   BorderStyle = bsDialog
   Caption = 'Device and serial port settings'
-  ClientHeight = 344
-  ClientWidth = 334
+  ClientHeight = 362
+  ClientWidth = 326
+  OnActivate = FormActivate
   OnCloseQuery = FormCloseQuery
   OnCreate = FormCreate
   OnDestroy = FormDestroy
   Position = poMainFormCenter
-  LCLVersion = '1.3'
+  LCLVersion = '2.3.0.0'
   object MainPanel: TPanel
+    AnchorSideLeft.Control = Owner
+    AnchorSideTop.Control = Owner
     Left = 0
-    Height = 298
+    Height = 320
     Top = 0
-    Width = 334
-    Align = alClient
+    Width = 332
+    AutoSize = True
     BevelOuter = bvNone
-    ClientHeight = 298
-    ClientWidth = 334
+    ClientHeight = 320
+    ClientWidth = 332
     TabOrder = 0
     object LblBaudRate: TLabel
+      AnchorSideLeft.Control = LblPort
+      AnchorSideTop.Control = PortDeviceBevel
+      AnchorSideTop.Side = asrBottom
       Left = 24
       Height = 15
       Top = 88
       Width = 50
+      BorderSpacing.Top = 16
       Caption = 'Baudrate:'
       ParentColor = False
     end
     object LblParity: TLabel
+      AnchorSideLeft.Control = LblPort
+      AnchorSideTop.Control = CbBaudRate
+      AnchorSideTop.Side = asrBottom
       Left = 24
       Height = 15
-      Top = 140
+      Top = 144
       Width = 30
+      BorderSpacing.Top = 16
       Caption = 'Parity'
       ParentColor = False
     end
     object LblDatabits: TLabel
+      AnchorSideLeft.Control = LblPort
+      AnchorSideTop.Control = CbParity
+      AnchorSideTop.Side = asrBottom
       Left = 24
       Height = 15
-      Top = 192
+      Top = 200
       Width = 46
+      BorderSpacing.Top = 16
       Caption = 'Data bits'
       ParentColor = False
     end
     object LblStopBits: TLabel
+      AnchorSideLeft.Control = LblPort
+      AnchorSideTop.Control = CbDatabits
+      AnchorSideTop.Side = asrBottom
       Left = 24
       Height = 15
-      Top = 244
+      Top = 256
       Width = 46
+      BorderSpacing.Top = 16
       Caption = 'Stop bits'
       ParentColor = False
     end
-    object BottomBevel: TBevel
-      Left = 0
-      Height = 74
-      Top = 0
-      Width = 334
-      Align = alTop
+    object PortDeviceBevel: TBevel
+      AnchorSideLeft.Control = MainPanel
+      AnchorSideTop.Control = CbPort
+      AnchorSideTop.Side = asrBottom
+      AnchorSideRight.Control = MainPanel
+      AnchorSideRight.Side = asrBottom
+      Left = 6
+      Height = 4
+      Top = 68
+      Width = 320
+      Anchors = [akTop, akLeft, akRight]
+      BorderSpacing.Left = 6
+      BorderSpacing.Right = 6
       Shape = bsBottomLine
     end
     object LblPort: TLabel
+      AnchorSideLeft.Control = MainPanel
+      AnchorSideTop.Control = MainPanel
       Left = 24
       Height = 15
       Top = 12
       Width = 25
+      BorderSpacing.Left = 24
+      BorderSpacing.Top = 12
       Caption = 'Port:'
       ParentColor = False
     end
     object CbBaudRate: TComboBox
+      AnchorSideLeft.Control = LblPort
+      AnchorSideTop.Control = LblBaudRate
+      AnchorSideTop.Side = asrBottom
+      AnchorSideRight.Control = CbPort
+      AnchorSideRight.Side = asrBottom
       Left = 24
       Height = 23
-      Top = 108
+      Top = 105
       Width = 100
+      Anchors = [akTop, akLeft, akRight]
+      BorderSpacing.Top = 2
       ItemHeight = 15
       Items.Strings = (
         '0'
@@ -115,10 +153,17 @@ object SerPortForm: TSerPortForm
       TabOrder = 2
     end
     object CbParity: TComboBox
+      AnchorSideLeft.Control = LblPort
+      AnchorSideTop.Control = LblParity
+      AnchorSideTop.Side = asrBottom
+      AnchorSideRight.Control = CbPort
+      AnchorSideRight.Side = asrBottom
       Left = 24
       Height = 23
-      Top = 160
+      Top = 161
       Width = 100
+      Anchors = [akTop, akLeft, akRight]
+      BorderSpacing.Top = 2
       ItemHeight = 15
       Items.Strings = (
         'N - none'
@@ -131,10 +176,17 @@ object SerPortForm: TSerPortForm
       TabOrder = 3
     end
     object CbDatabits: TComboBox
+      AnchorSideLeft.Control = LblPort
+      AnchorSideTop.Control = LblDatabits
+      AnchorSideTop.Side = asrBottom
+      AnchorSideRight.Control = CbPort
+      AnchorSideRight.Side = asrBottom
       Left = 24
       Height = 23
-      Top = 212
+      Top = 217
       Width = 100
+      Anchors = [akTop, akLeft, akRight]
+      BorderSpacing.Top = 2
       ItemHeight = 15
       Items.Strings = (
         '4'
@@ -144,13 +196,21 @@ object SerPortForm: TSerPortForm
         '8'
       )
       Style = csDropDownList
-      TabOrder = 4
+      TabOrder = 5
     end
     object CbStopBits: TComboBox
+      AnchorSideLeft.Control = LblPort
+      AnchorSideTop.Control = LblStopBits
+      AnchorSideTop.Side = asrBottom
+      AnchorSideRight.Control = CbPort
+      AnchorSideRight.Side = asrBottom
       Left = 24
       Height = 23
-      Top = 264
+      Top = 273
       Width = 100
+      Anchors = [akTop, akLeft, akRight]
+      BorderSpacing.Top = 2
+      BorderSpacing.Bottom = 24
       ItemHeight = 15
       Items.Strings = (
         '1'
@@ -158,30 +218,44 @@ object SerPortForm: TSerPortForm
         '2'
       )
       Style = csDropDownList
-      TabOrder = 5
+      TabOrder = 7
     end
     object CbPort: TComboBox
+      AnchorSideLeft.Control = LblPort
+      AnchorSideTop.Control = LblPort
+      AnchorSideTop.Side = asrBottom
       Left = 24
       Height = 23
-      Top = 32
+      Top = 29
       Width = 100
+      BorderSpacing.Top = 2
+      BorderSpacing.Bottom = 16
       ItemHeight = 15
       Style = csDropDownList
       TabOrder = 0
     end
-    object LblPort1: TLabel
-      Left = 160
+    object LblDevice: TLabel
+      AnchorSideLeft.Control = CbDevice
+      AnchorSideTop.Control = MainPanel
+      Left = 156
       Height = 15
       Top = 12
       Width = 38
+      BorderSpacing.Top = 12
       Caption = 'Device:'
       ParentColor = False
     end
     object CbDevice: TComboBox
-      Left = 160
+      AnchorSideLeft.Control = CbPort
+      AnchorSideLeft.Side = asrBottom
+      AnchorSideTop.Control = LblDevice
+      AnchorSideTop.Side = asrBottom
+      Left = 156
       Height = 23
-      Top = 32
+      Top = 27
       Width = 152
+      BorderSpacing.Left = 32
+      BorderSpacing.Right = 24
       ItemHeight = 15
       Items.Strings = (
         ''
@@ -191,13 +265,20 @@ object SerPortForm: TSerPortForm
       TabOrder = 1
     end
     object RgHandshake: TRadioGroup
-      Left = 160
+      AnchorSideLeft.Control = CbDevice
+      AnchorSideTop.Control = LblBaudRate
+      AnchorSideRight.Control = CbDevice
+      AnchorSideRight.Side = asrBottom
+      AnchorSideBottom.Control = CbParity
+      AnchorSideBottom.Side = asrBottom
+      Left = 156
       Height = 96
       Top = 88
       Width = 152
+      Anchors = [akTop, akLeft, akBottom]
       AutoFill = True
       Caption = 'Handshake'
-      ChildSizing.LeftRightSpacing = 6
+      ChildSizing.LeftRightSpacing = 12
       ChildSizing.TopBottomSpacing = 6
       ChildSizing.EnlargeHorizontal = crsHomogenousChildResize
       ChildSizing.EnlargeVertical = crsHomogenousChildResize
@@ -212,22 +293,31 @@ object SerPortForm: TSerPortForm
         'Software'
         'Hardware'
       )
-      TabOrder = 6
+      TabOrder = 4
     end
     object LblReadout: TLabel
-      Left = 160
+      AnchorSideLeft.Control = CbDevice
+      AnchorSideTop.Control = EdDigits
+      AnchorSideTop.Side = asrBottom
+      Left = 156
       Height = 15
-      Top = 244
+      Top = 256
       Width = 47
+      BorderSpacing.Top = 16
       Caption = 'Readout:'
       FocusControl = CbReadout
       ParentColor = False
     end
     object CbReadout: TComboBox
-      Left = 160
+      AnchorSideLeft.Control = CbDevice
+      AnchorSideTop.Control = LblReadout
+      AnchorSideTop.Side = asrBottom
+      AnchorSideRight.Control = CbDevice
+      Left = 156
       Height = 23
-      Top = 264
+      Top = 273
       Width = 152
+      BorderSpacing.Top = 2
       ItemHeight = 15
       Items.Strings = (
         'unknown'
@@ -235,34 +325,41 @@ object SerPortForm: TSerPortForm
         'ASCII digits'
       )
       Style = csDropDownList
-      TabOrder = 7
+      TabOrder = 8
     end
-    object LblDatabits1: TLabel
-      Left = 160
+    object LblDisplayDigits: TLabel
+      AnchorSideLeft.Control = CbDevice
+      AnchorSideTop.Control = LblDatabits
+      Left = 156
       Height = 15
-      Top = 192
+      Top = 200
       Width = 73
       Caption = 'Display digits:'
       FocusControl = EdDigits
       ParentColor = False
     end
     object EdDigits: TSpinEdit
-      Left = 160
+      AnchorSideLeft.Control = CbDevice
+      AnchorSideTop.Control = LblDisplayDigits
+      AnchorSideTop.Side = asrBottom
+      Left = 156
       Height = 23
-      Top = 212
+      Top = 217
       Width = 73
       Alignment = taRightJustify
+      BorderSpacing.Top = 2
       MaxValue = 6
       MinValue = 1
-      TabOrder = 8
+      TabOrder = 6
       Value = 1
     end
   end
   object ButtonPanel: TButtonPanel
     Left = 6
     Height = 34
-    Top = 304
-    Width = 322
+    Top = 322
+    Width = 314
+    BorderSpacing.InnerBorder = 6
     OKButton.Name = 'OKButton'
     OKButton.DefaultCaption = True
     HelpButton.Name = 'HelpButton'
