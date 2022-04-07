@@ -36,7 +36,7 @@ inherited RemoveCurvesForm: TRemoveCurvesForm
       Left = 9
       Height = 19
       Top = 13
-      Width = 128
+      Width = 126
       Caption = 'Re-assign line colors'
       TabOrder = 2
     end

@@ -46,18 +46,16 @@ inherited TimeOffsetForm: TTimeOffsetForm
       Height = 23
       Top = 8
       Width = 72
-      Increment = 1
       MaxValue = 1E308
       MinValue = -1E308
       OnChange = EdOffsetChange
       TabOrder = 2
-      Value = 0
     end
     object LblTimeOffset: TLabel[3]
       Left = 16
       Height = 15
       Top = 11
-      Width = 60
+      Width = 59
       Alignment = taRightJustify
       Caption = 'Time offset'
       FocusControl = EdOffset

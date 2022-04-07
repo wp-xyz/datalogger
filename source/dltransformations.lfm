@@ -10,7 +10,7 @@ object TransformationForm: TTransformationForm
   Constraints.MinWidth = 445
   OnCreate = FormCreate
   OnDestroy = FormDestroy
-  LCLVersion = '1.5'
+  LCLVersion = '2.3.0.0'
   object TransformationsListView: TListView
     Left = 4
     Height = 293
@@ -64,7 +64,7 @@ object TransformationForm: TTransformationForm
       ModalResult = 1
       OnClick = BtnOKClick
       Spacing = 8
-      TabOrder = 0
+      TabOrder = 3
     end
     object BtnCancel: TBitBtn
       Left = 455
@@ -76,7 +76,7 @@ object TransformationForm: TTransformationForm
       DefaultCaption = True
       Kind = bkCancel
       ModalResult = 2
-      TabOrder = 1
+      TabOrder = 4
     end
     object BtnAdd: TBitBtn
       Left = 8
@@ -121,7 +121,7 @@ object TransformationForm: TTransformationForm
         FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00
       }
       OnClick = BtnAddClick
-      TabOrder = 2
+      TabOrder = 0
     end
     object BtnEdit: TBitBtn
       Left = 96
@@ -166,7 +166,7 @@ object TransformationForm: TTransformationForm
         FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00
       }
       OnClick = BtnEditClick
-      TabOrder = 3
+      TabOrder = 1
     end
     object BtnDelete: TBitBtn
       Left = 184
@@ -211,7 +211,7 @@ object TransformationForm: TTransformationForm
         FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00
       }
       OnClick = BtnDeleteClick
-      TabOrder = 4
+      TabOrder = 2
     end
     object Bevel1: TBevel
       Left = 8

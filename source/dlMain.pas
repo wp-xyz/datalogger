@@ -2,6 +2,7 @@ unit dlMain;
 
 {$mode objfpc}{$H+}
 {$WARN 6058 off : Call to subroutine "$1" marked as inline is not inlined}
+
 interface
 
 uses
@@ -142,16 +143,16 @@ type
     procedure AcTransformationsExecute(Sender: TObject);
     procedure ApplicationPropertiesHint(Sender: TObject);
     procedure CbFilesSelect(Sender: TObject);
-    procedure ChartListboxAddSeries(ASender: TChartListbox;
-      ASeries: TCustomChartSeries; AItems: TChartLegendItems; var ASkip: Boolean);
-    procedure ChartListboxSeriesIconDblClick(ASender: TObject; AIndex: Integer);
+    procedure ChartListboxAddSeries({%H-}ASender: TChartListbox;
+      ASeries: TCustomChartSeries; {%H-}AItems: TChartLegendItems; var ASkip: Boolean);
+    procedure ChartListboxSeriesIconDblClick({%H-}ASender: TObject; AIndex: Integer);
     procedure ChartSourceGetChartDataItem(ASource: TUserDefinedChartSource;
       AIndex: Integer; var AItem: TChartDataItem);
     procedure CoolBarResize(Sender: TObject);
     procedure DataGridDrawCell(Sender: TObject; ACol, ARow: Integer;
-      ARect: TRect; AState: TGridDrawState);
-    procedure DataGridPrepareCanvas(sender: TObject; ACol, ARow: Integer;
-      AState: TGridDrawState);
+      ARect: TRect; {%H-}AState: TGridDrawState);
+    procedure DataGridPrepareCanvas(sender: TObject; ACol, {%H-}ARow: Integer;
+      {%H-}AState: TGridDrawState);
     procedure DataPointCrosshairToolAfterMouseUp(ATool: TChartTool; APoint: TPoint);
     procedure DataPointCrosshairToolDraw(ASender: TDataPointDrawTool);
     procedure FormActivate(Sender: TObject);
@@ -192,7 +193,7 @@ type
     { Display & Chart }
     FLEDDisplay : TLEDDisplay;
     procedure ApplySeriesSettings(ASeries: TLineseries; AIndex: Integer);
-    procedure ApplyTimeOffsetHandler(Sender: TObject; ASeries: TChartSeries);
+    procedure ApplyTimeOffsetHandler(Sender: TObject; {%H-}ASeries: TChartSeries);
     function CanSetLogarithmic: Boolean;
     procedure GetDataInfo(ASeries: TChartSeries; out AQuantName, AUnitName: String);
     procedure PopulateLogSource;
@@ -602,9 +603,9 @@ end;
 
 procedure TMainForm.AcTimeOffsetExecute(Sender:TObject);
 var
-  Dlg : TTimeOffsetForm;
-  i,j : integer;
-  oldoffs : array of double = nil;
+  Dlg: TTimeOffsetForm;
+  i: integer;
+  oldoffs: array of double = nil;
 
   procedure AddToDlg(AItem:TDataList);
   begin
@@ -652,8 +653,8 @@ end;
 procedure TMainForm.AcTransformationsExecute(Sender : TObject);
 var
   F : TTransformationForm;
-  ini : TCustomIniFile;
-  i : integer;
+  {%H-}ini : TCustomIniFile;
+  {%H-}i : integer;
 begin
   F := TTransformationForm.Create(nil);
   try

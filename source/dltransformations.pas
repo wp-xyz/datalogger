@@ -5,8 +5,8 @@ unit dlTransformations;
 interface
 
 uses
-  Classes, SysUtils, FileUtil, Forms, Controls, Graphics, Dialogs, ButtonPanel,
-  Buttons, StdCtrls, ComCtrls, ExtCtrls, fpexprpars;
+  Classes, SysUtils, FileUtil, Forms, Controls, Graphics, Dialogs, 
+  Buttons, ComCtrls, ExtCtrls, fpexprpars;
 
 type
 
@@ -27,7 +27,7 @@ type
     procedure BtnOKClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
-    procedure TransformationsListViewSelectItem(Sender: TObject; Item: TListItem;
+    procedure TransformationsListViewSelectItem(Sender: TObject; {%H-}Item: TListItem;
       Selected: Boolean);
   private
     { private declarations }
@@ -112,7 +112,6 @@ end;
 
 procedure TTransformationForm.BtnEditClick(Sender: TObject);
 var
-  item: TListItem;
   F: TTransformationEditor;
 begin
   F := TTransformationEditor.Create(nil);

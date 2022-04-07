@@ -6,7 +6,7 @@ interface
 
 uses
   Classes, SysUtils, ComCtrls, FileUtil, LResources, Forms,
-  Controls, Graphics, Dialogs, ExtCtrls, StdCtrls, Buttons;
+  Controls, Graphics, Dialogs, ExtCtrls, Buttons;
 
 type
   { TListViewForm }

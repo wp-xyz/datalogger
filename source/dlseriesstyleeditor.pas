@@ -31,7 +31,7 @@ type
     LblBorderColor: TLabel;
     Panel1: TPanel;
     EdLineWidth: TSpinEdit;
-    procedure CbLineStyleDrawItem(Control: TWinControl; Index: Integer;
+    procedure CbLineStyleDrawItem({%H-}Control: TWinControl; Index: Integer;
       ARect: TRect; State: TOwnerDrawState);
     procedure CbShowLinesChange(Sender: TObject);
     procedure CbShowSymbolsChange(Sender: TObject);
@@ -74,15 +74,14 @@ implementation
 {$R *.lfm}
 
 uses
-  LCLType,
-  TAGeometry;
+  LCLType;
 
 { TSeriesStyleEditor }
 
 procedure TSeriesStyleEditor.CbLineStyleDrawItem(Control: TWinControl;
   Index: Integer; ARect: TRect; State: TOwnerDrawState);
 const
-  SYMBOLWIDTH = 48;
+  SYMBOL_WIDTH = 48;
 var
   y: Integer;
 begin
@@ -98,8 +97,8 @@ begin
     Canvas.FillRect(ARect);
     Canvas.Pen.Color := clBlack;
     Canvas.Pen.Style := TPenStyle(PtrInt(Items.Objects[Index]));
-    Canvas.Line(2, y, SYMBOLWIDTH, y);
-    ARect.Left := SYMBOLWIDTH + 6;
+    Canvas.Line(2, y, SYMBOL_WIDTH, y);
+    ARect.Left := SYMBOL_WIDTH + 6;
     Canvas.TextOut(ARect.Left, y - Canvas.TextHeight('M') div 2, Items[Index]);
   end;
 end;

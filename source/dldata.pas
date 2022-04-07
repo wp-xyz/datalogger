@@ -6,7 +6,7 @@ interface
 
 uses
   Classes, SysUtils, contnrs, laz2_xmlread, laz2_DOM, fpexprpars,
-  fpstypes, fpspreadsheet, fpsallformats,
+  fpstypes, fpspreadsheet, {%H-}fpsallformats,
   TACustomSeries,
   dlGlobal;
 
@@ -96,7 +96,7 @@ implementation
 uses
   Math, StrUtils,
   fpsUtils, fpsXMLCommon,
-  dlUtils, dlTransformations;
+  dlUtils;
 
 
 { Utilities }
@@ -184,7 +184,6 @@ end;
 
 procedure TDataList.ConvertTimeUnits(ANewUnits: TTimeUnits);
 var
-  t: TDateTime;
   i: Integer;
 begin
   if ANewUnits = FTimeUnits then
@@ -251,11 +250,10 @@ end;
 
 procedure TDataList.LoadFromTextFile(const AFileName: String);
 var
-  F : TextFile;
-  s, sx, sy : string;
-  p : integer;
-  x, y : double;
-  res : integer;
+  F: TextFile;
+  s: string;
+  p: integer;
+  x, y: double;
   L: TStringList;
   ok: Boolean;
   fs: TFormatSettings;
@@ -309,7 +307,7 @@ procedure TDataList.LoadFromXMLFile(const AFileName: String);
 var
   measnode: TDOMNode;
   node: TDOMNode;
-  transnode, itemnode, valuenode: TDOMNode;
+  itemnode, valuenode: TDOMNode;
   doc: TXMLDocument;
   nodename: String;
   s, sComment: String;
@@ -420,10 +418,10 @@ end;
 procedure TDataList.SaveAsSpreadsheetFile(const AFileName: String;
   AFormat: TsSpreadsheetFormat; ACommentLinesOnly: Boolean = false);
 var
-  r,c: Cardinal;
+  i: Integer;
+  r, c: Cardinal;
   workbook: TsWorkbook;
   worksheet: TsWorksheet;
-  i: Integer;
   flag: TTransformFlag;
   cTime, cRaw, cTrans, cComment: LongInt;
   x, y, yt: Double;
@@ -446,16 +444,16 @@ begin
 
     // Write header row
     r := 0;
-    worksheet.WriteUTF8Text(r, cTime, TIME_CAPTION[FTimeUnits]);
-    worksheet.WriteUTF8Text(r, cRaw, Caption[false]);
+    worksheet.WriteText(r, cTime, TIME_CAPTION[FTimeUnits]);
+    worksheet.WriteText(r, cRaw, Caption[false]);
     if cTrans <> -1 then
-      worksheet.WriteUTF8Text(r, cTrans, Caption[true]);
+      worksheet.WriteText(r, cTrans, Caption[true]);
     if cComment <> -1 then
-      worksheet.WriteUTF8Text(r, cComment, 'Comments');
+      worksheet.WriteText(r, cComment, 'Comments');
 
     // Format header row in bold
-    for i := 0 to worksheet.GetLastColIndex do
-      worksheet.WriteFontStyle(r, i, [fssBold]);
+    for c := 0 to worksheet.GetLastColIndex do
+      worksheet.WriteFontStyle(r, c, [fssBold]);
 
     // Write data cells
     for i := 0 to Count-1 do begin
@@ -473,7 +471,7 @@ begin
       if (cTrans <> -1) and not IsNaN(yt) then
         worksheet.WriteNumber(r, cTrans, yt);
       if cComment <> -1 then
-        worksheet.WriteUTF8Text(r, cComment, Items[i].Comment);
+        worksheet.WriteText(r, cComment, Items[i].Comment);
     end;
 
     // Save to file
@@ -550,7 +548,7 @@ var
   i: Integer;
   item: TDataItem;
   sName, sUnits: String;
-  sMinIn, sMaxIn, sMinOut, sMaxOut, sMultiplier: String;
+  sMinIn, sMaxIn, sMinOut, sMaxOut: String;
   sTrans: String;
   valTrans: Double;
   hasTrans: Boolean;

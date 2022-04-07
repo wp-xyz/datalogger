@@ -8,7 +8,7 @@ object MeasSettingsForm: TMeasSettingsForm
   ClientHeight = 280
   ClientWidth = 673
   OnCreate = FormCreate
-  LCLVersion = '1.3'
+  LCLVersion = '2.3.0.0'
   object ButtonPanel1: TButtonPanel
     Left = 6
     Height = 34
@@ -23,7 +23,7 @@ object MeasSettingsForm: TMeasSettingsForm
     CloseButton.DefaultCaption = True
     CancelButton.Name = 'CancelButton'
     CancelButton.DefaultCaption = True
-    TabOrder = 0
+    TabOrder = 2
     ShowButtons = [pbOK, pbCancel]
   end
   object GroupBox1: TGroupBox
@@ -37,18 +37,16 @@ object MeasSettingsForm: TMeasSettingsForm
     ClientWidth = 636
     Font.Style = [fsBold]
     ParentFont = False
-    TabOrder = 1
+    TabOrder = 0
     object EdInterval1: TFloatSpinEdit
       Left = 79
       Height = 23
       Top = 6
       Width = 59
       Alignment = taRightJustify
-      Increment = 1
       MaxValue = 1E308
-      MinValue = 0
       ParentFont = False
-      TabOrder = 0
+      TabOrder = 1
       Value = 0.5
     end
     object InfoCondition1: TLabel
@@ -66,12 +64,9 @@ object MeasSettingsForm: TMeasSettingsForm
       Top = 40
       Width = 59
       Alignment = taRightJustify
-      Increment = 1
       MaxValue = 1E308
-      MinValue = 0
       ParentFont = False
-      TabOrder = 1
-      Value = 0
+      TabOrder = 4
       Visible = False
     end
     object CbCondition2: TComboBox
@@ -91,7 +86,7 @@ object MeasSettingsForm: TMeasSettingsForm
       OnSelect = CbConditionSelect
       ParentFont = False
       Style = csDropDownList
-      TabOrder = 2
+      TabOrder = 5
       Text = 'after ... '
       Visible = False
     end
@@ -111,7 +106,7 @@ object MeasSettingsForm: TMeasSettingsForm
       )
       ParentFont = False
       Style = csDropDownList
-      TabOrder = 3
+      TabOrder = 7
       Text = 'seconds'
       Visible = False
     end
@@ -119,7 +114,7 @@ object MeasSettingsForm: TMeasSettingsForm
       Left = 15
       Height = 19
       Top = 8
-      Width = 55
+      Width = 53
       Caption = 'At first'
       Checked = True
       Color = clDefault
@@ -127,31 +122,31 @@ object MeasSettingsForm: TMeasSettingsForm
       ParentColor = False
       ParentFont = False
       State = cbChecked
-      TabOrder = 4
+      TabOrder = 0
     end
     object CbUseCondition2: TCheckBox
       Left = 15
       Height = 19
       Top = 42
-      Width = 47
+      Width = 44
       Caption = 'Then'
       Color = clDefault
       OnChange = CbUseConditionChange
       ParentColor = False
       ParentFont = False
-      TabOrder = 5
+      TabOrder = 3
     end
     object CbUseCondition3: TCheckBox
       Left = 15
       Height = 19
       Top = 74
-      Width = 47
+      Width = 44
       Caption = 'Then'
       Color = clDefault
       OnChange = CbUseConditionChange
       ParentColor = False
       ParentFont = False
-      TabOrder = 6
+      TabOrder = 8
     end
     object EdInterval3: TFloatSpinEdit
       Left = 79
@@ -159,12 +154,9 @@ object MeasSettingsForm: TMeasSettingsForm
       Top = 72
       Width = 59
       Alignment = taRightJustify
-      Increment = 1
       MaxValue = 1E308
-      MinValue = 0
       ParentFont = False
-      TabOrder = 7
-      Value = 0
+      TabOrder = 9
       Visible = False
     end
     object CbCondition3: TComboBox
@@ -183,7 +175,7 @@ object MeasSettingsForm: TMeasSettingsForm
       OnSelect = CbConditionSelect
       ParentFont = False
       Style = csDropDownList
-      TabOrder = 8
+      TabOrder = 10
       Text = 'after ... '
       Visible = False
     end
@@ -203,7 +195,7 @@ object MeasSettingsForm: TMeasSettingsForm
       )
       ParentFont = False
       Style = csDropDownList
-      TabOrder = 9
+      TabOrder = 12
       Text = 'seconds'
       Visible = False
     end
@@ -224,7 +216,7 @@ object MeasSettingsForm: TMeasSettingsForm
       OnSelect = CbIntervalUnitsSelect
       ParentFont = False
       Style = csDropDownList
-      TabOrder = 10
+      TabOrder = 2
       Text = 'seconds'
     end
     object LblInterval2Unit: TLabel
@@ -252,12 +244,9 @@ object MeasSettingsForm: TMeasSettingsForm
       Width = 70
       Alignment = taRightJustify
       Anchors = [akTop, akRight]
-      Increment = 1
       MaxValue = 1E308
-      MinValue = 0
       ParentFont = False
-      TabOrder = 11
-      Value = 0
+      TabOrder = 6
       Visible = False
     end
     object EdCondition3Limit: TFloatSpinEdit
@@ -267,12 +256,9 @@ object MeasSettingsForm: TMeasSettingsForm
       Width = 70
       Alignment = taRightJustify
       Anchors = [akTop, akRight]
-      Increment = 1
       MaxValue = 1E308
-      MinValue = 0
       ParentFont = False
-      TabOrder = 12
-      Value = 0
+      TabOrder = 11
       Visible = False
     end
   end
@@ -287,7 +273,7 @@ object MeasSettingsForm: TMeasSettingsForm
     ClientWidth = 636
     Font.Style = [fsBold]
     ParentFont = False
-    TabOrder = 2
+    TabOrder = 1
     object CbTransformation: TComboBox
       Left = 15
       Height = 23

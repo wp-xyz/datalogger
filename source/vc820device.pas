@@ -17,10 +17,9 @@ type
   TVC820Decoder = class(TSerialDecoder)
   private
     FPrevDecimals: Integer;
-  protected
-    procedure Decode(ABuffer: TSerialDataArray); override;
   public
     constructor Create; override;
+    procedure Decode(ABuffer: TSerialDataArray); override;
   end;
 
 
@@ -33,8 +32,6 @@ uses
 { TVC820Thread }
 
 procedure TVC820Thread.Execute;
-var
-  buf: array[0..13] of byte;
 begin
   BufferSize := 14;
 
@@ -122,7 +119,7 @@ begin
   // The bytes are numbered from 1 to E. This number is in the higher nibble.
   // If not, then there are wrong data.
   for i:=0 to BUFSIZE-1 do
-    if (ABuffer[i] and $F0) shr 4 <> i+1 then begin
+    if integer((ABuffer[i] and $F0) shr 4) <> i+1 then begin
       FStatus := sdrFormatError;
       exit;
     end;

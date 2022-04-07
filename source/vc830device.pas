@@ -14,10 +14,9 @@ type
   end;
 
   TVC830Decoder = class(TSerialDecoder)
-  protected
-    procedure Decode(ABuffer: TSerialDataArray); override;
   public
     constructor Create; override;
+    procedure Decode(ABuffer: TSerialDataArray); override;
   end;
 
 
@@ -34,7 +33,6 @@ const
 var
   s: AnsiString;
   i: Integer;
-  ok: Boolean;
 begin
   FSerial.RTS := false;
   FSerial.DTR := true;
@@ -68,8 +66,7 @@ procedure TVC830Decoder.Decode(ABuffer: TSerialDataArray);
 const
   DECPT : array['1'..'4'] of integer = (2, 3, -1, 4);      // '3' not used
 var
-  val: String;
-  i: Integer;
+  val: String = '';
 begin
   inherited Decode(ABuffer);
 

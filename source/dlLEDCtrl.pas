@@ -32,7 +32,7 @@ interface
 {.$DEFINE BGRASupport}
 
 uses
-  LCLType, LCLIntf, LResources, LMessages, Buttons,
+  LCLType, LCLIntf, LResources, Buttons,
   Classes, Graphics, Controls, ExtCtrls, SysUtils,
  {$IFDEF BGRASupport}
   BGRABitmap, BGRABitmapTypes,
@@ -331,7 +331,7 @@ begin
 end;
 
 
-procedure Get3DColors(FaceColor: TColor; var HighLightColor, ShadowColor: TColor; HLFactor, ShFactor: single);
+procedure Get3DColors(FaceColor: TColor; out HighLightColor, ShadowColor: TColor; HLFactor, ShFactor: single);
 var
   V,HLS : TColorVector;
   R,G,B : Byte;
@@ -381,9 +381,9 @@ begin
   Result := RGBToColor( YR, YG, YB);
 end; {GetIntermediateColor}
 
-function GetOffColor(const OnColor:TColor;const AContrast:TContrast):TColor;
+function GetOffColor(const OnColor:TColor ;const AContrast:TContrast): TColor;
 var
-  Dummy : TCOlor;
+  Dummy: TColor;
 begin
   Get3DColors(OnColor, Dummy, Result,(10-AContrast)/10,(10-AContrast)/10);
 end; {CalculateOffColor}
@@ -797,8 +797,8 @@ begin
   end;
 
   // make sure to have a decimal separator in the string
-  if pos(DecimalSeparator, FDisplayText) = 0 then
-    FDisplayText := FDisplayText + DecimalSeparator;
+  if pos(FormatSettings.DecimalSeparator, FDisplayText) = 0 then
+    FDisplayText := FDisplayText + FormatSettings.DecimalSeparator;
   if FLeadingZeros then begin
     if FValue < 0 then
       while Length(FDisplayText) < FNumDigits+1 do
@@ -811,7 +811,7 @@ begin
       FDisplayText := ' ' + FDisplayText;
 
   // remove aux decimals separator added above.
-  if FDisplayText[Length(FDisplayText)] = DecimalSeparator then
+  if FDisplayText[Length(FDisplayText)] = FormatSettings.DecimalSeparator then
     System.Delete(FDisplayText, Length(FDisplayText), 1);
 end;
 
@@ -831,7 +831,7 @@ begin
     Brush.Color := FColorBackground;
     FillRect(Area);
     for i:=1 to Length(FDisplaytext) do begin
-      if (FDisplaytext[i] = DecimalSeparator) or (FDisplaytext[i] = '.') then
+      if (FDisplaytext[i] = FormatSettings.DecimalSeparator) or (FDisplaytext[i] = '.') then
         PaintSep(DigitLeft, DigitTop, DigitSpace)
       else begin
         case FDisplayText[i] of
@@ -1030,8 +1030,8 @@ end;
 
 procedure TLEDDisplay.SetLEDContrast(newContrast: TContrast);
 begin
-  if (FLEDContrast <> newContrast) and (newContrast >= 0) and (newContrast < 10)
-  then begin
+  if (FLEDContrast <> newContrast) then
+  begin
     FLEDContrast := newContrast;
     FSegmentOffColor := GetIntermediateColor(FColorLED, FColorBackground, FLEDContrast);
     CreateDigitBitmaps;

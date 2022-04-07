@@ -165,7 +165,7 @@ function GetSerialDeviceErrorText(AStatus: Integer): String;
 implementation
 
 uses
-  StrUtils, Math;
+  Math;
 
 const
   QUANTITY_NAMES : array[TQuantity] of string = (

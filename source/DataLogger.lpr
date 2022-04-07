@@ -10,7 +10,7 @@ uses
   Forms, tachartlazaruspkg, laz_fpspreadsheet, dlMain, dlSerialDevice,
   VC820device, VC830Device, dlGlobal, dlUtils, dlData, dlTransformations,
 dlTransformationEditor, mrumanager, dlTimeOffsetDialog, dlListViewDialog,
-dlRemoveCurveDialog, dlMeasSettingsDialog, dlseriesstyleeditor
+dlRemoveCurveDialog, dlMeasSettingsDialog, dlseriesstyleeditor, dlLEDCtrl
   { you can add units after this };
 
 {$R *.res}
