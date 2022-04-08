@@ -268,19 +268,19 @@ begin
         if IsEmptyNumber(T.MinIn) then
           minIn := ''
         else
-          minIn := Format('%0.4e', [T.MinIn]);
+          minIn := Format('%0.4e', [T.MinIn], fs);
         if IsEmptyNumber(T.MaxIn) then
           maxIn := ''
         else
-          maxIn := Format('%0.4e', [T.MaxIn]);
+          maxIn := Format('%0.4e', [T.MaxIn], fs);
         if IsEmptyNumber(T.MinOut) then
           minOut:= ''
         else
-          minOut := Format('%0.4e', [T.MinOut]);
+          minOut := Format('%0.4e', [T.MinOut], fs);
         if IsEmptyNumber(T.MaxOut) then
           maxOut := ''
         else
-          maxOut := Format('%0.4e', [T.MaxOut]);
+          maxOut := Format('%0.4e', [T.MaxOut], fs);
         ini.WriteString(
           'Transformations',
           T.TransformationName,

@@ -328,7 +328,6 @@ begin
   P := TDataList(CbFiles.Items.Objects[CbFiles.ItemIndex]);
   if P <> nil then begin
     SelectTransformation(MeasSettings.Transformation, P);
-//    P.CopyTransformationFrom(FMeasData);
     SetupGrid;
     (P.Series.Source as TUserDefinedChartSource).Reset;
   end;
@@ -337,7 +336,7 @@ end;
 
 procedure TMainForm.AcAutoSaveSettingsExecute(Sender: TObject);
 begin
-  // Nothing to do. Just need the Checked property...
+  // Nothing to do. We just need the Checked property which is set by AutoCheck...
 end;
 
 
@@ -972,7 +971,7 @@ begin
 
   if CanClose then
   begin
-    if (FSerialDevice <> nil) and FSerialDevice.Connected then   // ??? evtl nach FormDestroy ??
+    if (FSerialDevice <> nil) and FSerialDevice.Connected then 
       FSerialDevice.Disconnect;
     if AcAutoSaveSettings.Checked then
       WriteToIni;
@@ -1055,6 +1054,8 @@ var
   yt: Double;
   flag: TTransformFlag;
 begin
+  Result := '';
+  
   if CbFiles.ItemIndex = -1 then
     exit;
   P := TDataList(CbFiles.Items.Objects[CbFiles.ItemIndex]);
@@ -1764,17 +1765,17 @@ begin
           AData.TransLog := SameText(L.Values['Logarithmic'], 'True');
 
           sf := L.Values['MinIn'];
-          if sf <> '' then x1 := StrToFloat(sf) else x1 := NaN;
+          if sf <> '' then x1 := StrToFloat(sf, UniversalFormatSettings) else x1 := NaN;
           sf := L.Values['MaxIn'];
-          if sf <> '' then x2 := StrToFloat(sf) else x2 := NaN;
+          if sf <> '' then x2 := StrToFloat(sf, UniversalFormatSettings) else x2 := NaN;
           PutInOrder(x1, x2);
           AData.TransMinIn := x1;
           AData.TransMaxIn := x2;
 
           sf := L.Values['MinOut'];
-          if sf <> '' then x1 := StrToFloat(sf) else x1 := NaN;
+          if sf <> '' then x1 := StrToFloat(sf, UniversalFormatSettings) else x1 := NaN;
           sf := L.Values['MaxOut'];
-          if sf <> '' then x2 := StrToFloat(sf) else x2 := NaN;
+          if sf <> '' then x2 := StrToFloat(sf, UniversalFormatSettings) else x2 := NaN;
           PutInOrder(x1, x2);
           AData.TransMinOut := x1;
           AData.TransMaxOut := x2;

@@ -8,6 +8,9 @@ uses
   Classes, SysUtils, IniFiles,
   dlGlobal;
 
+var
+  UniversalFormatSettings: TFormatSettings;
+  
 function  CreateIni : TCustomIniFile;
 function  CreateGlobalIni : TCustomIniFile;
 
@@ -34,8 +37,6 @@ uses
 
 type
   TMyMemIniFile = class(TMemIniFile)
-  private
-    FPointFormatSettings: TFormatSettings;
   public
     constructor Create(const AFileName: string; AEscapeLineFeeds : Boolean = False); override;
     function ReadFloat(const Section, Ident: string; Default: Double): Double; override;
@@ -46,20 +47,17 @@ constructor TMyMemIniFile.Create(const AFileName: string;
   AEscapeLineFeeds : Boolean = False);
 begin
   inherited Create(AFileName, AEscapeLineFeeds);
-  FPointFormatSettings := DefaultFormatSettings;
-  FPointFormatSettings.DecimalSeparator := '.';
-  FPointFormatSettings.ThousandSeparator := ',';
 end;
 
 function TMyMemIniFile.ReadFloat(const Section, Ident: string;
   Default: Double): Double;
 begin
-  Result := StrToFloatDef(ReadString(Section, Ident, ''), Default, FPointFormatSettings);
+  Result := StrToFloatDef(ReadString(Section, Ident, ''), Default, UniversalFormatSettings);
 end;
 
 procedure TMyMemIniFile.WriteFloat(const Section, Ident: string; Value: Double);
 begin
-  WriteString(Section, Ident, FloatToStr(Value, FPointFormatSettings));
+  WriteString(Section, Ident, FloatToStr(Value, UniversalFormatSettings));
 end;
 
 
@@ -176,5 +174,13 @@ begin
     Result := ConvertFromDateTime(ConvertToDateTime(AValue, FromUnits), ToUnits);
 end;
 
+
+initialization
+  UniversalFormatSettings := FormatSettings;
+  UniversalFormatSettings.DecimalSeparator := '.';
+  UniversalFormatSettings.DateSeparator := '-';
+  UniversalFormatSettings.ThousandSeparator := ',';
+  UniversalFormatSettings.LongDateFormat := 'yyyy/mm/dd';
+  
 end.
 

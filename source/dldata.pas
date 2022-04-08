@@ -256,11 +256,10 @@ var
   x, y: double;
   L: TStringList;
   ok: Boolean;
-  fs: TFormatSettings;
+  hasTrans: Boolean = false;
+  hasComment: Boolean = false;
+  commentCol: Integer = -1;
 begin
-  fs := DefaultFormatSettings;
-  fs.DecimalSeparator := '.';
-
   AssignFile(F, AFileName);
   Reset(F);
 
@@ -277,21 +276,46 @@ begin
       if (s[1] <> '#') then begin
         L.DelimitedText := s;
         ok := false;
-        if (L.Count > 1) then
-          ok := TryStrToFloat(L[0], x, fs) and TryStrToFloat(L[1], y, fs);
+        ok := TryStrToFloat(L[0], x, UniversalFormatSettings) and 
+              TryStrToFloat(L[1], y, UniversalFormatSettings);
         if ok then begin
-          if (L.Count > 2) and (L[2] <> '') then
-            AddValue(x, y, L[2])
+          if hasComment then
+            AddValue(x, y, L[commentCol])
           else
             AddValue(x, y);
         end;
       end else
-      if LeftStr(s, 5) = '#Time' then begin
+      if Lowercase(LeftStr(s, 5)) = '#time' then begin
         L.DelimitedText := s;
-        s := L[1];
+        if L.Count < 2 then
+          raise Exception.Create('Not enough columns');
+        if L.Count = 2 then
+        begin
+          hasTrans := false;
+          hasComment := false;
+        end else
+        if L.Count = 3 then
+        begin
+          hasTrans := L[2] <> '';
+          hasComment := not hasTrans;
+          if hasComment then commentCol := 2;
+        end else
+        begin
+          hasTrans := true;
+          hasComment := L[3] = '';
+          if hasComment then commentCol := 3;
+        end;
+
         p := pos(',', L[1]);
-        FTransQuantName := Copy(L[1], 1, p-1);
-        FTransUnits := trim(Copy(L[1], p+1, MaxInt));
+        FRawQuantName := Copy(L[1], 1, p-1);
+        FRawUnits := trim(Copy(L[1], p+1, MaxInt));
+        
+        if hasTrans then
+        begin
+          p := pos(',', L[2]);
+          FTransQuantName := Copy(L[2], 1, p-1);
+          FTransUnits := trim(Copy(L[2], p+1, MaxInt));
+        end;
       end;
     end;
 
@@ -311,13 +335,9 @@ var
   doc: TXMLDocument;
   nodename: String;
   s, sComment: String;
-  fs: TFormatSettings;
   t, x: Double;
   tu: TTimeUnits;
 begin
-  fs := DefaultFormatSettings;
-  fs.DecimalSeparator := '.';
-
   FFileName := AFileName;
   FTimeUnits := tuSeconds;
 
@@ -345,22 +365,26 @@ begin
 
       s := GetAttrValue(node, 'min-in');
       FTransMinIn := NaN;
-      if (s <> '') and TryStrToFloat(s, x, fs) then FTransMinIn := x;
+      if (s <> '') and TryStrToFloat(s, x, UniversalFormatSettings) then 
+        FTransMinIn := x;
 
       s := GetAttrValue(node, 'max-in');
       FTransMaxIn := NaN;
-      if (s <> '') and TryStrToFloat(s, x, fs) then FTransMaxIn := x;
+      if (s <> '') and TryStrToFloat(s, x, UniversalFormatSettings) then 
+        FTransMaxIn := x;
 
       s := GetAttrValue(node, 'min-out');
       FTransMinOut := NaN;
-      if (s <> '') and TryStrToFloat(s, x, fs) then FTransMinOut := x;
+      if (s <> '') and TryStrToFloat(s, x, UniversalFormatSettings) then 
+        FTransMinOut := x;
 
       s := GetAttrValue(node, 'max-out');
       FTransMaxOut := NaN;
-      if (s <> '') and TryStrToFloat(s, x, fs) then FTransMaxOut := x;
+      if (s <> '') and TryStrToFloat(s, x, UniversalFormatSettings) then 
+        FTransMaxOut := x;
 
       s := GetAttrValue(node, 'logarithmic-plot');
-      if s = 'true' then FTransLog := true else FTransLog := false;
+      FTransLog := s = 'true';
     end
     else
     // Read values
@@ -368,8 +392,10 @@ begin
       FRawQuantName := GetAttrValue(node, 'name');
       FRawUnits := GetAttrValue(node, 'units');
       s := GetAttrValue(node, 'multiplier');
-      if (s <> '') and TryStrToFloat(s, x, fs)
-        then FRawMultiplier := x else FRawMultiplier := 1.0;
+      if (s <> '') and TryStrToFloat(s, x, UniversalFormatSettings) then
+        FRawMultiplier := x 
+      else 
+        FRawMultiplier := 1.0;
       s := GetAttrValue(measnode, 'start-datetime');
       if s <> '' then
         FMeasDate := StrToDate(s);
@@ -393,12 +419,13 @@ begin
             nodename := valuenode.NodeName;
             if nodename = 'time' then begin
               s := GetAttrValue(valuenode, 'value');
-              if (s <> '') and TryStrToFloat(s, t, fs) then else t := NaN;
+              if (s = '') or not TryStrToFloat(s, t, UniversalFormatSettings) then 
+                t := NaN;
             end;
             if nodename = 'value' then begin
               s := GetAttrValue(valuenode, 'value');
-              if (s <> '') and TryStrToFloat(s, x, fs) then else x := NaN;
-              //sTrans := GetAttrValue(valuenode, 'transformed-value');
+              if (s = '') or not TryStrToFloat(s, x, UniversalFormatSettings) then 
+                x := NaN;
             end;
             if nodename = 'comment' then
               sComment := valuenode.NodeValue;
@@ -493,11 +520,7 @@ var
   item: TDataItem;
   hasTrans: Boolean;
   rawTitle, transTitle: String;
-  fs: TFormatSettings;
 begin
-  fs := DefaultFormatSettings;
-  fs.DecimalSeparator := '.';
-
   hasTrans := TransExpression <> '';
   rawTitle := GetCaption(false);
   transTitle := GetCaption(true);
@@ -523,7 +546,7 @@ begin
       if DiagramSettings.TimeDisplay = tdDateTime then
         sx := FormatDateTime('c', x)
       else
-        sx := Format('%g', [x], fs);
+        sx := Format('%g', [x], UniversalFormatSettings);
       y := item.Value;
       if hasTrans then begin
         yt := Transform(y, flag);
@@ -547,33 +570,37 @@ var
   stream: TMemoryStream;
   i: Integer;
   item: TDataItem;
-  sName, sUnits: String;
+  sName, sUnits, sDate: String;
   sMinIn, sMaxIn, sMinOut, sMaxOut: String;
   sTrans: String;
   valTrans: Double;
   hasTrans: Boolean;
   flags: TTransformFlag;
-  fs: TFormatSettings;
 begin
   stream := TMemoryStream.Create;
   try
-    fs := DefaultFormatSettings;
-    fs.DecimalSeparator := '.';
-
     AppendToStream(stream,
       '<?xml version="1.0" encoding="UTF-8" ?>');
 
     AppendToStream(stream,
       '<measurement>');
 
+    sName := IfThen(FRawQuantName = '', '', Format('name="%s" ', [FRawQuantName]));
+    sUnits := IfThen(FRawUnits = '', '', Format('units="%s" ', [FRawUnits]));
+    sDate :=  DateToStr(FMeasDate, UniversalFormatSettings);
+    AppendToStream(stream,
+      Format('<raw-data %s %s multiplier="%g" count="%d" start-datetime="%s" time-units="%s">', [
+        sName, sUnits, FRawMultiplier, Count, sDate, TIME_UNITS[FTimeUnits]
+      ], UniversalFormatSettings));
+
     hasTrans := TransExpression <> '';
     if hasTrans then begin
       sName := IfThen(FTransQuantName = '', '', Format('quantity-name="%s" ', [FTransQuantName]));
       sUnits := IfThen(FTransUnits = '', '', Format('units="%s" ', [FTransUnits]));
-      sMinIn := IfThen(IsNan(FTransMinIn), '', Format('min-in="%g" ', [FTransMinIn]));
-      sMaxIn := IfThen(IsNan(FTransMaxIn), '', Format('max-in="%g" ', [FTransMaxIn]));
-      sMinOut := IfThen(IsNan(FTransMinOut), '', Format('min-out="%g" ', [FTransMinOut]));
-      sMaxOut := IfThen(IsNan(FTransMaxOut), '', Format('max-out="%g" ', [FTransMaxOut]));
+      sMinIn := IfThen(IsNan(FTransMinIn), '', Format('min-in="%g" ', [FTransMinIn], UniversalFormatSettings));
+      sMaxIn := IfThen(IsNan(FTransMaxIn), '', Format('max-in="%g" ', [FTransMaxIn], UniversalFormatSettings));
+      sMinOut := IfThen(IsNan(FTransMinOut), '', Format('min-out="%g" ', [FTransMinOut], UniversalFormatSettings));
+      sMaxOut := IfThen(IsNan(FTransMaxOut), '', Format('max-out="%g" ', [FTransMaxOut], UniversalFormatSettings));
       AppendToStream(stream,
         Format(
         '<transformation expression="%s" ' +
@@ -582,33 +609,24 @@ begin
           sName + sUnits + '/>', [
         TransExpression,
         BoolToStr(FTransLog, true)
-        ], fs) );
+        ], UniversalFormatSettings) );
     end;
-
-    sName := IfThen(FRawQuantName = '', '', Format('name="%s" ', [FRawQuantName]));
-    sUnits := IfThen(FRawUnits = '', '', Format('units="%s" ', [FRawUnits]));
-    AppendToStream(stream,
-      Format(
-        '<raw-data '+
-          sName + sUnits + 'multiplier="%g" count="%d" start-datetime="%s" time-units="%s">', [
-        FRawMultiplier, Count, DateToStr(FMeasDate), TIME_UNITS[FTimeUnits]
-      ], fs));
 
     for i := 0 to Count-1 do begin
       item := Items[i];
       sTrans := '';
       if hasTrans then begin
         valTrans := Transform(item.Value, flags);
-        sTrans := IfThen(flags = tfOK, Format('transformed-value="%g" ', [valTrans], fs));
+        sTrans := IfThen(flags = tfOK, Format('transformed-value="%g" ', [valTrans], UniversalFormatSettings));
       end;
       AppendToStream(stream,
           '<item>');
       AppendToStream(stream, Format(
             '<time value="%g" />',
-            [item.Time], fs ));
+            [item.Time], UniversalFormatSettings ));
       AppendToStream(stream, Format(
             '<value value="%g" ' + sTrans + '/>',
-            [item.Value], fs ));
+            [item.Value], UniversalFormatSettings ));
       if item.Comment <> '' then
         AppendToStream(stream,
             '<comment>' +
