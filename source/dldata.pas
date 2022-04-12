@@ -306,15 +306,31 @@ begin
           if hasComment then commentCol := 3;
         end;
 
-        p := pos(',', L[1]);
-        FRawQuantName := Copy(L[1], 1, p-1);
-        FRawUnits := trim(Copy(L[1], p+1, MaxInt));
+        s := L[1];
+        p := pos(',', s);
+        if p > 0 then
+        begin
+          FRawQuantName := trim(Copy(s, 1, p-1));
+          FRawUnits := trim(Copy(s, p+1, MaxInt));
+        end else
+        begin
+          FRawQuantName := s;
+          FRawUnits := '';
+        end;
         
         if hasTrans then
         begin
-          p := pos(',', L[2]);
-          FTransQuantName := Copy(L[2], 1, p-1);
-          FTransUnits := trim(Copy(L[2], p+1, MaxInt));
+          s := L[2];
+          p := pos(',', s);
+          if p > 0 then
+          begin
+            FTransQuantName := trim(Copy(s, 1, p-1));
+            FTransUnits := trim(Copy(s, p+1, MaxInt));
+          end else
+          begin
+            FTransQuantName := s;
+            FTransUnits := '';
+          end;
         end;
       end;
     end;

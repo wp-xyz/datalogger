@@ -1558,16 +1558,6 @@ begin
       key := 'Settings';
       AcAutoSaveSettings.Checked := ini.ReadBool(key, 'AutoSaveSettings',
         AcAutoSaveSettings.Checked);
-      (*
-      AcShowRawData.Checked := ini.ReadBool('Settings', 'ShowRawData', AcShowRawData.Checked);
-      AcShowRawDataExecute(nil);
-      s := ini.ReadString('Settings', 'OpenInitialDir', '');
-      if DirectoryExists(s) then
-        OpenDialog.InitialDir := s;
-      s := ini.ReadString('Settings', 'SaveInitialDir', '');
-      if DirectoryExists(s) then
-        SaveDialog.InitialDir := s;
-        *)
       s := Lowercase(ini.ReadString(key, 'SaveExt', '.txt'));
       AcFileSaveAs.Dialog.FilterIndex := GetDefaultFilterIndex(s);
 
@@ -2138,12 +2128,12 @@ begin
         Marks.Source := nil;
    //     Intervals.Options := Intervals.Options - [aipGraphCoords]; //, aipUseMaxLength];
         Intervals.Options := Intervals.Options + [aipGraphCoords]; // - [aipUseMaxLength];
-        Intervals.MaxLength := 100;
+        Intervals.MaxLength := 150;
         Intervals.MinLength := 20;
-        Intervals.NiceSteps := Format('%g|%g|%g', [log10(0.2), log10(0.5), log10(1.0)]);
+//        Intervals.NiceSteps := Format('%g|%g|%g', [log10(0.2), log10(0.5), log10(1.0)]);
         if Minors.Count > 0 then
           Minors[0].Intervals.Count := 4;
-        Intervals.Tolerance := 5;
+        Intervals.Tolerance := 50;
       end;
     end else begin
       Marks.Source := nil;

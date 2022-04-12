@@ -154,15 +154,22 @@ object MainForm: TMainForm
       ClientHeight = 439
       ClientWidth = 836
       object DataGrid: TDrawGrid
-        Left = 4
-        Height = 398
-        Top = 37
-        Width = 828
-        Align = alClient
-        BorderSpacing.Around = 4
+        AnchorSideLeft.Control = Panel1
+        AnchorSideTop.Control = Panel1
+        AnchorSideTop.Side = asrBottom
+        AnchorSideRight.Control = PgTable
+        AnchorSideRight.Side = asrBottom
+        AnchorSideBottom.Control = PgTable
+        AnchorSideBottom.Side = asrBottom
+        Left = 0
+        Height = 405
+        Top = 34
+        Width = 836
+        Anchors = [akTop, akLeft, akRight, akBottom]
         ColCount = 4
         DefaultColWidth = 40
         ExtendedSelect = False
+        MouseWheelOption = mwGrid
         Options = [goFixedVertLine, goFixedHorzLine, goVertLine, goHorzLine, goRangeSelect, goColSizing, goThumbTracking, goFixedRowNumbering]
         TabOrder = 0
         TitleStyle = tsNative
@@ -170,18 +177,26 @@ object MainForm: TMainForm
         OnPrepareCanvas = DataGridPrepareCanvas
       end
       object Panel1: TPanel
+        AnchorSideLeft.Control = PgTable
+        AnchorSideTop.Control = PgTable
+        AnchorSideRight.Control = PgTable
+        AnchorSideRight.Side = asrBottom
         Left = 0
-        Height = 33
+        Height = 34
         Top = 0
         Width = 836
-        Align = alTop
+        Anchors = [akTop, akLeft, akRight]
+        AutoSize = True
         BevelOuter = bvNone
         Caption = 'Panel1'
-        ClientHeight = 33
+        ClientHeight = 34
         ClientWidth = 836
         TabOrder = 1
         object BitBtn1: TBitBtn
-          Left = 728
+          AnchorSideTop.Control = Panel1
+          AnchorSideRight.Control = Panel1
+          AnchorSideRight.Side = asrBottom
+          Left = 730
           Height = 30
           Top = 2
           Width = 104
@@ -193,14 +208,13 @@ object MainForm: TMainForm
           TabOrder = 0
         end
         object CbFiles: TComboBox
-          Left = 4
+          AnchorSideLeft.Control = Panel1
+          AnchorSideTop.Control = Panel1
+          AnchorSideTop.Side = asrCenter
+          Left = 0
           Height = 23
           Top = 6
-          Width = 718
-          Align = alTop
-          BorderSpacing.Top = 2
-          BorderSpacing.Right = 110
-          BorderSpacing.Around = 4
+          Width = 486
           ItemHeight = 15
           OnSelect = CbFilesSelect
           Style = csDropDownList
