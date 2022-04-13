@@ -10,6 +10,7 @@ DataLogger is a small application which reads measured values from a digital mul
 * Linear or logarithmic display of the measured quantity.
 * Measurement interval: a few measurements per second, or slower. Interval can be varied during the measurement.
 * Transformations: User-provided equation to convert the measured quantity to some other quantity. The application initially was written to convert the analog voltage output of a pressure meter to pressure in mBar.
+* Add comments during the measurement to mark special events. The comments are displayed along with the measured data.
 * Save measured curve as xml, csv or spreadsheet files. Re-load and overlay previously measured curves.
 
 # Compilation
