@@ -7,9 +7,9 @@ DataLogger is a small application which reads measured values from a digital mul
 # Features
 * Interfaces to some digital multimeters with digital output via serial port. Use a serial/usb converter if your computer does not have a serial input any more. Supported models: 
 * Supported models: Conrad VC630, VC820, VC830, VC840, VC850, or "user-defined" (based on the DMM chips _FS9721_LP3_ (seven-segment output) and _FS9922-DMM4_ (digit output) by Fortune Semiconductor)
-* Linear or logarithmic display of the measured quantity.
-* Measurement interval: a few measurements per second, or slower. Interval can be varied during the measurement.
+ Measurement interval: a few measurements per second, or slower. Interval can be varied during the measurement.
 * Transformations: User-provided equation to convert the measured quantity to some other quantity. The application initially was written to convert the analog voltage output of a pressure meter to pressure in mBar.
+* Linear or logarithmic display of the measured quantity.
 * Add comments during the measurement to mark special events. The comments are displayed along with the measured data.
 * Save measured curve as xml, csv or spreadsheet files. Re-load and overlay previously measured curves.
 
