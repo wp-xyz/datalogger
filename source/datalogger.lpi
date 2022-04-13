@@ -160,6 +160,7 @@
       <Unit0>
         <Filename Value="DataLogger.lpr"/>
         <IsPartOfProject Value="True"/>
+        <UnitName Value="datalogger"/>
       </Unit0>
       <Unit1>
         <Filename Value="dlMain.pas"/>

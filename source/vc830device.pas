@@ -29,7 +29,7 @@ uses
 
 procedure TVC830Thread.Execute;
 const
-  BUFSIZE = 12;  // eigentlich 14, aber #13#10 sind am Ende schon entfernt
+  BUFSIZE = 12;  // should be 14, but #13#10 at the end already has been removed.
 var
   s: AnsiString;
   i: Integer;

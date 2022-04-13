@@ -1819,7 +1819,7 @@ begin
   if u = '' then
     Chart.LeftAxis.Title.Caption := s
   else
-    Chart.LeftAxis.Title.Caption := Format('%s [%s]', [s, u]);
+    Chart.LeftAxis.Title.Caption := Format('%s, %s', [s, u]);
 
   UpdateChart;
   SetupGrid;
