@@ -1,6 +1,6 @@
 # datalogger
 
-DataLogger is a small application which reads measured values from a digital multimeter and plots them as a function of time.
+_Data Logger_ is a small application which reads measured values from a digital multimeter and plots them as a function of time.
 
 ![Screenshot](screenshots/datalogger-main.png)
 
