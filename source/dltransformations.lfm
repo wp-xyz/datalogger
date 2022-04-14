@@ -9,7 +9,6 @@ object TransformationForm: TTransformationForm
   Constraints.MinHeight = 110
   Constraints.MinWidth = 445
   OnCreate = FormCreate
-  OnDestroy = FormDestroy
   LCLVersion = '2.3.0.0'
   object TransformationsListView: TListView
     AnchorSideLeft.Control = Owner

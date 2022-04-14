@@ -6,12 +6,12 @@ interface
 
 uses
   Classes, SysUtils, FileUtil, Forms, Controls, Graphics, Dialogs, ButtonPanel,
-  ExtCtrls, StdCtrls;
+  ExtCtrls, StdCtrls, dlTransformation;
 
 type
 
   TEditMode = (emNew, emEdit);
-
+                   {
   TTransformation = class
   public
     TransformationName : string;
@@ -23,7 +23,7 @@ type
     MaxOut, MinOut : double;
     constructor Create;
     procedure Assign(T: TTransformation);
-  end;
+  end;              }
 
 
   { TTransformationEditor }
@@ -77,6 +77,7 @@ uses
   Math,
   dlGlobal, dlUtils;
 
+(*
 { TTransformation }
 
 constructor TTransformation.Create;
@@ -100,24 +101,33 @@ begin
   MaxOut := T.MaxOut;
   MinOut := T.MinOut;
 end;
-
+*)
 
 { TTransformationEditor }
 
 function TTransformationEditor.GetTransformation: TTransformation;
+var
+  mx, mn: Double;
 begin
   Result := TTransformation.Create;
+
   Result.TransformationName := EdTransformationName.Text;
   Result.Expression := EdExpression.Text;
   Result.MeasName := EdName.Text;
   Result.MeasUnits := EdUnits.Text;
   Result.Logarithmic := CbLogarithmic.Checked;
-  if EdMinIn.Text = '' then Result.MinIn := nan else Result.MinIn := StrToFloat(EdMinIn.Text);
-  if EdMaxIn.Text = '' then Result.MaxIn := nan else Result.MaxIn := StrToFloat(EdMaxIn.Text);
-  if EdMinOut.Text = '' then Result.MinOut := nan else Result.MinOut := StrToFloat(EdMinOut.Text);
-  if EdMaxOut.Text = '' then Result.MaxOut := nan else Result.MaxOut := StrToFloat(EdMaxOut.Text);
-  PutInOrder(Result.MinIn, Result.MaxIn);
-  PutInOrder(Result.MinOut, Result.MaxOut);
+  
+  if EdMinIn.Text = '' then mn := NaN else mn := StrToFloat(edMinIn.Text);
+  if EdMaxIn.Text = '' then mx := NaN else mx := StrToFloat(edMaxIn.Text);
+  PutInOrder(mn, mx);
+  Result.MinIn := mn;
+  Result.MaxIn := mx;
+  
+  if EdMinOut.Text = '' then mn := NaN else mn := StrToFloat(edMinOut.Text);
+  if EdMaxOut.Text = '' then mx := NaN else mx := StrToFloat(edMaxOut.Text);
+  PutInOrder(mn, mx);
+  Result.MinOut := mn;
+  Result.MaxOut := mx;
 end;
 
 

@@ -76,6 +76,7 @@
           <Linking>
             <Debugging>
               <DebugInfoType Value="dsDwarf3"/>
+              <UseHeaptrc Value="True"/>
               <TrashVariables Value="True"/>
               <UseExternalDbgSyms Value="True"/>
             </Debugging>
@@ -156,7 +157,7 @@
         <PackageName Value="LCL"/>
       </Item4>
     </RequiredPackages>
-    <Units Count="18">
+    <Units Count="19">
       <Unit0>
         <Filename Value="DataLogger.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -267,6 +268,11 @@
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
       </Unit17>
+      <Unit18>
+        <Filename Value="dltransformation.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="dlTransformation"/>
+      </Unit18>
     </Units>
   </ProjectOptions>
   <CompilerOptions>

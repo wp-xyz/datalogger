@@ -29,6 +29,8 @@ function  ConvertFromDateTime(AValue: TDateTime; AUnits: TTimeUnits): Double; in
 function  ConvertToDateTime(AValue: Double; AUnits: TTimeUnits): TDateTime; inline;
 function  ConvertTimeUnits(AValue: Double; FromUnits, ToUnits: TTimeUnits): Double;
 
+function TrimBrackets(const s: String): String;
+
 
 implementation
 
@@ -174,6 +176,15 @@ begin
     Result := ConvertFromDateTime(ConvertToDateTime(AValue, FromUnits), ToUnits);
 end;
 
+function TrimBrackets(const s: String): String;
+begin
+  Result := s;
+  if (Result <> '') and (Result[1] = '(') then 
+    Delete(Result, 1, 1);
+  if (Result <> '') and (Result[Length(Result)] = ')') then 
+    Delete(Result, Length(Result), 1);
+end;
+  
 
 initialization
   UniversalFormatSettings := FormatSettings;

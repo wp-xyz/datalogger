@@ -6,7 +6,7 @@ interface
 
 uses
   Classes, SysUtils, FileUtil, Forms, Controls, Graphics, Dialogs, 
-  Buttons, ComCtrls, ExtCtrls, fpexprpars;
+  Buttons, ComCtrls, ExtCtrls; 
 
 type
 
@@ -26,7 +26,6 @@ type
     procedure BtnEditClick(Sender: TObject);
     procedure BtnOKClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
-    procedure FormDestroy(Sender: TObject);
     procedure TransformationsListViewSelectItem(Sender: TObject; {%H-}Item: TListItem;
       Selected: Boolean);
   private
@@ -47,29 +46,32 @@ implementation
 {$R *.lfm}
 
 uses
-  IniFiles, Math,
-  dlGlobal, dlUtils, dlTransformationEditor;
+  IniFiles,
+  dlGlobal, dlUtils, dlTransformation, dlTransformationEditor;
 
 
 { TTransformationForm }
 
 procedure TTransformationForm.BtnAddClick(Sender: TObject);
 var
-  item : TListItem;
+  item: TListItem;
   F: TTransformationEditor;
+  T: TTransformation;
 begin
   F := TTransformationEditor.Create(nil);
   try
     F.EditMode := emNew;
     F.SetTransformation(nil);
     if F.ShowModal = mrOK then begin;
+      T := F.GetTransformation;
+      TransformationList.Add(T);
       item := TransformationsListView.Items.Add;
       with item do begin
-        Data := F.GetTransformation;
-        Caption := TTransformation(Data).TransformationName;
-        SubItems.Add(TTransformation(Data).Expression);
-        SubItems.Add(TTransformation(Data).MeasName);
-        SubItems.Add(TTransformation(Data).MeasUnits);
+        Data := T;
+        Caption := T.TransformationName;
+        SubItems.Add(T.Expression);
+        SubItems.Add(T.MeasName);
+        SubItems.Add(T.MeasUnits);
       end;
       TransformationsListView.Selected := item;
       UpdateCmdStates;
@@ -84,9 +86,8 @@ procedure TTransformationForm.BtnDeleteClick(Sender : TObject);
 var
   res : integer;
   item : TListItem;
-  indx : integer;
-  nextIndx : integer;
-  T: TTransformation;
+  idx : integer;
+  nextIdx : integer;
 begin
   item := TransformationsListView.Selected;
   if item = nil then
@@ -95,15 +96,17 @@ begin
   res := MessageDlg('Do you really want to delete this transformation?',
     mtConfirmation, [mbYes, mbNo], 0);
   if res = mrYes then begin
-    indx := item.Index;
-    T := TTransformation(item.Data);
-    T.Free;
-    TransformationsListView.Items.Delete(indx);
-    if indx >= TransformationsListView.Items.Count-1 then
-      nextIndx := TransformationsListView.Items.Count - 1
+    idx := item.Index;
+    // Delete transformation from global transformation list
+    TransformationList.Delete(idx);
+    // Delete item from listview
+    TransformationsListView.Items.Delete(idx);
+    // Select next item
+    if idx >= TransformationsListView.Items.Count-1 then
+      nextIdx := TransformationsListView.Items.Count - 1
     else
-      nextIndx := indx;
-    TransformationsListView.Selected := TransformationsListView.Items[nextIndx];
+      nextIdx := idx;
+    TransformationsListView.Selected := TransformationsListView.Items[nextIdx];
   end;
 
   UpdateCmdStates;
@@ -162,18 +165,6 @@ begin
 end;
 
 
-procedure TTransformationForm.FormDestroy(Sender: TObject);
-var
-  i: Integer;
-  T: TTransformation;
-begin
-  for i:=TransformationsListView.Items.Count-1 downto 0 do begin
-    T := TTransformation(TransformationsListView.Items[i].Data);
-    T.Free;
-  end;
-end;
-
-
 procedure TTransformationForm.TransformationsListViewSelectItem(Sender: TObject;
   Item: TListItem; Selected: Boolean);
 begin
@@ -182,6 +173,30 @@ begin
 end;
 
 
+procedure TTransformationForm.LoadTransformations;
+var
+  i: Integer;
+  T: TTransformation;
+begin
+  TransformationsListView.Items.BeginUpdate;
+  try
+    TransformationsListView.Items.Clear;
+    for i := 0 to TransformationList.Count-1 do
+    begin
+      T := TransformationList[i];
+      with TransformationsListView.Items.Add do begin
+        Caption := T.TransformationName;
+        SubItems.Add(T.Expression);
+        SubItems.Add(T.MeasName);
+        SubItems.Add(T.MeasUnits);
+        Data := T;
+      end;
+    end;
+  finally
+    TransformationsListView.Items.EndUpdate;
+  end;
+end;
+    (*  
 procedure TTransformationForm.LoadTransformations;
 var
   ini : TCustomIniFile;
@@ -244,9 +259,21 @@ begin
     List.Free;
     ini.Free;
   end;
+end;   *)
+
+
+procedure TTransformationForm.SaveTransformations;
+var
+  ini: TCustomIniFile;
+begin
+  ini := CreateGlobalIni;
+  try
+    TransformationList.WriteToIni(ini);
+  finally
+    ini.Free;
+  end;
 end;
-
-
+      (*
 procedure TTransformationForm.SaveTransformations;
 var
   ini : TCustomIniFile;
@@ -299,7 +326,7 @@ begin
   finally
     ini.Free;
   end;
-end;
+end;   *)
 
 procedure TTransformationForm.UpdateCmdStates;
 begin

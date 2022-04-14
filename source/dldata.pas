@@ -11,11 +11,6 @@ uses
   dlGlobal;
 
 type
-  TDataParser = class(TFPExpressionParser)
-  public
-    constructor Create(AOwner:TComponent); override;
-  end;
-
   TDataItem = class
     Time : double;
     Value: double;
@@ -60,7 +55,7 @@ type
     function AddValue(ATime, AValue: Double; const AComment: String = ''): TDataItem;
     function CanSetLogarithmic: boolean;
     procedure Clear;
-    procedure CopyTransformationFrom(AData: TDataList);
+//    procedure CopyTransformationFrom(AData: TDataList);
     function HasComments: Boolean;
     function HasTransformation: Boolean;
     procedure LoadFromTextFile(const AFileName: String);
@@ -96,7 +91,7 @@ implementation
 uses
   Math, StrUtils,
   fpsUtils, fpsXMLCommon,
-  dlUtils;
+  dlUtils, dlTransformation;
 
 
 { Utilities }
@@ -122,22 +117,6 @@ begin
 end;
 
 
-{ TDataParser }
-
-procedure dp_power(var Result:TFPExpressionResult; const Args:TExprParameterArray);
-begin
-  Result.resFloat := power(Args[0].resFloat, Args[1].resFloat);
-end;
-
-constructor TDataParser.Create(AOwner:TComponent);
-begin
-  inherited Create(AOwner);
-  BuiltIns := [bcMath, bcBoolean];
-  Identifiers.AddFunction('power', 'F', 'F', @dp_power);
-  Identifiers.AddFloatVariable('x', 1.0);
-end;
-
-
 { TDataList }
 
 constructor TDataList.Create;
@@ -145,8 +124,8 @@ begin
   inherited Create;
   FRawMultiplier := 1.0;
   FTimeOffset := 0.0;
-  FParser := TDataParser.Create(nil);
-  FParserVariable := TDataParser(FParser).IdentifierByName('x');
+  FParser := TTransformationParser.Create(nil);
+  FParserVariable := TTransformationParser(FParser).Variable;
   Clear;
 end;
 
@@ -192,7 +171,7 @@ begin
     Items[i].Time := dlUtils.ConvertTimeUnits(Items[i].Time, FTimeUnits, ANewUnits);
   FTimeUnits := ANewUnits;
 end;
-
+           (*
 procedure TDataList.CopyTransformationFrom(AData: TDataList);
 begin
   if AData = nil then begin
@@ -215,7 +194,7 @@ begin
     TransLog := AData.TransLog;
   end;
 end;
-
+       *)
 function TDataList.GetCaption(ATransformedData: Boolean): String;
 begin
   if ATransformedData then
@@ -248,6 +227,8 @@ begin
   Result := TransExpression <> '';
 end;
 
+{ Reads the raw data in a saved text file. Transformed data, if available,
+  will be ignored - they will be recalculated by the application. }
 procedure TDataList.LoadFromTextFile(const AFileName: String);
 var
   F: TextFile;
@@ -256,7 +237,6 @@ var
   x, y: double;
   L: TStringList;
   ok: Boolean;
-  hasTrans: Boolean = false;
   hasComment: Boolean = false;
   commentCol: Integer = -1;
 begin
@@ -289,22 +269,9 @@ begin
         L.DelimitedText := s;
         if L.Count < 2 then
           raise Exception.Create('Not enough columns');
-        if L.Count = 2 then
-        begin
-          hasTrans := false;
-          hasComment := false;
-        end else
-        if L.Count = 3 then
-        begin
-          hasTrans := L[2] <> '';
-          hasComment := not hasTrans;
-          if hasComment then commentCol := 2;
-        end else
-        begin
-          hasTrans := true;
-          hasComment := L[3] = '';
-          if hasComment then commentCol := 3;
-        end;
+        
+        hasComment := L.Count > 2;
+        commentCol := L.Count-1;
 
         s := L[1];
         p := pos(',', s);
@@ -317,21 +284,6 @@ begin
           FRawQuantName := s;
           FRawUnits := '';
         end;
-        
-        if hasTrans then
-        begin
-          s := L[2];
-          p := pos(',', s);
-          if p > 0 then
-          begin
-            FTransQuantName := trim(Copy(s, 1, p-1));
-            FTransUnits := trim(Copy(s, p+1, MaxInt));
-          end else
-          begin
-            FTransQuantName := s;
-            FTransUnits := '';
-          end;
-        end;
       end;
     end;
 
@@ -343,6 +295,8 @@ begin
 end;
 
 
+{ Reads the raw data in a saved xml file. Transformed data, if available,
+  will be ignored - they will be recalculated by the application. }
 procedure TDataList.LoadFromXMLFile(const AFileName: String);
 var
   measnode: TDOMNode;
@@ -373,38 +327,8 @@ begin
   while node <> nil do begin
     nodename := node.NodeName;
 
-    // Read transformation
-    if nodename = 'transformation' then begin
-      TransExpression := GetAttrValue(node, 'expression');
-      FTransQuantName := GetAttrValue(node, 'quantity-name');
-      FTransUnits := GetAttrValue(node, 'units');
-
-      s := GetAttrValue(node, 'min-in');
-      FTransMinIn := NaN;
-      if (s <> '') and TryStrToFloat(s, x, UniversalFormatSettings) then 
-        FTransMinIn := x;
-
-      s := GetAttrValue(node, 'max-in');
-      FTransMaxIn := NaN;
-      if (s <> '') and TryStrToFloat(s, x, UniversalFormatSettings) then 
-        FTransMaxIn := x;
-
-      s := GetAttrValue(node, 'min-out');
-      FTransMinOut := NaN;
-      if (s <> '') and TryStrToFloat(s, x, UniversalFormatSettings) then 
-        FTransMinOut := x;
-
-      s := GetAttrValue(node, 'max-out');
-      FTransMaxOut := NaN;
-      if (s <> '') and TryStrToFloat(s, x, UniversalFormatSettings) then 
-        FTransMaxOut := x;
-
-      s := GetAttrValue(node, 'logarithmic-plot');
-      FTransLog := s = 'true';
-    end
-    else
     // Read values
-    if nodename = 'raw-data' then begin
+    if (nodename = 'raw-data') or (nodename = 'values') then begin
       FRawQuantName := GetAttrValue(node, 'name');
       FRawUnits := GetAttrValue(node, 'units');
       s := GetAttrValue(node, 'multiplier');
@@ -438,7 +362,7 @@ begin
               if (s = '') or not TryStrToFloat(s, t, UniversalFormatSettings) then 
                 t := NaN;
             end;
-            if nodename = 'value' then begin
+            if (nodename = 'value') or (nodename = 'raw-value') then begin
               s := GetAttrValue(valuenode, 'value');
               if (s = '') or not TryStrToFloat(s, x, UniversalFormatSettings) then 
                 x := NaN;
@@ -458,6 +382,9 @@ begin
 end;
 
 
+{ Writes raw and transformed data (if available) to a spreadsheet file. 
+  if ACommentLinesOnly is true only lines with comments will be written in order
+  to facilitate finding comment lines. }
 procedure TDataList.SaveAsSpreadsheetFile(const AFileName: String;
   AFormat: TsSpreadsheetFormat; ACommentLinesOnly: Boolean = false);
 var
@@ -525,6 +452,9 @@ begin
 end;
 
 
+{ Writes raw and transformed data (if available) to a text file. 
+  if ACommentLinesOnly is true only lines with comments will be written in order
+  to facilitate finding comment lines. }
 procedure TDataList.SaveAsTextFile(const AFilename:string;
   ACommentLinesOnly: Boolean = false);
 var
@@ -581,14 +511,18 @@ begin
 end;
 
 
+{ Writes raw and transformed data (if available) to an xml file. 
+  The transformation itself is not written.
+  If ACommentLinesOnly is true only lines with comments will be written in order
+  to facilitate finding comment lines. }
 procedure TDataList.SaveAsXMLFile(const AFileName: String);
+const
+  LE = LineEnding;
 var
   stream: TMemoryStream;
   i: Integer;
   item: TDataItem;
   sName, sUnits, sDate: String;
-  sMinIn, sMaxIn, sMinOut, sMaxOut: String;
-  sTrans: String;
   valTrans: Double;
   hasTrans: Boolean;
   flags: TTransformFlag;
@@ -596,64 +530,45 @@ begin
   stream := TMemoryStream.Create;
   try
     AppendToStream(stream,
-      '<?xml version="1.0" encoding="UTF-8" ?>');
+      '<?xml version="1.0" encoding="UTF-8" ?>' + LE);
 
     AppendToStream(stream,
-      '<measurement>');
+      '<measurement>' + LE);
 
     sName := IfThen(FRawQuantName = '', '', Format('name="%s" ', [FRawQuantName]));
     sUnits := IfThen(FRawUnits = '', '', Format('units="%s" ', [FRawUnits]));
     sDate :=  DateToStr(FMeasDate, UniversalFormatSettings);
-    AppendToStream(stream,
-      Format('<raw-data %s %s multiplier="%g" count="%d" start-datetime="%s" time-units="%s">', [
+    AppendToStream(stream, Format(
+      '  <values %s %s multiplier="%g" count="%d" start-datetime="%s" time-units="%s">' + LE, [
         sName, sUnits, FRawMultiplier, Count, sDate, TIME_UNITS[FTimeUnits]
       ], UniversalFormatSettings));
 
-    hasTrans := TransExpression <> '';
-    if hasTrans then begin
-      sName := IfThen(FTransQuantName = '', '', Format('quantity-name="%s" ', [FTransQuantName]));
-      sUnits := IfThen(FTransUnits = '', '', Format('units="%s" ', [FTransUnits]));
-      sMinIn := IfThen(IsNan(FTransMinIn), '', Format('min-in="%g" ', [FTransMinIn], UniversalFormatSettings));
-      sMaxIn := IfThen(IsNan(FTransMaxIn), '', Format('max-in="%g" ', [FTransMaxIn], UniversalFormatSettings));
-      sMinOut := IfThen(IsNan(FTransMinOut), '', Format('min-out="%g" ', [FTransMinOut], UniversalFormatSettings));
-      sMaxOut := IfThen(IsNan(FTransMaxOut), '', Format('max-out="%g" ', [FTransMaxOut], UniversalFormatSettings));
-      AppendToStream(stream,
-        Format(
-        '<transformation expression="%s" ' +
-          sMinIn + sMaxIn + sMinOut + sMaxOut +
-          'logarithmic-plot="%s" ' +
-          sName + sUnits + '/>', [
-        TransExpression,
-        BoolToStr(FTransLog, true)
-        ], UniversalFormatSettings) );
-    end;
-
     for i := 0 to Count-1 do begin
       item := Items[i];
-      sTrans := '';
-      if hasTrans then begin
-        valTrans := Transform(item.Value, flags);
-        sTrans := IfThen(flags = tfOK, Format('transformed-value="%g" ', [valTrans], UniversalFormatSettings));
-      end;
       AppendToStream(stream,
-          '<item>');
+        '    <item>' + LE);
       AppendToStream(stream, Format(
-            '<time value="%g" />',
-            [item.Time], UniversalFormatSettings ));
+        '      <time value="%g" />' + LE, [item.Time], UniversalFormatSettings ));
       AppendToStream(stream, Format(
-            '<value value="%g" ' + sTrans + '/>',
-            [item.Value], UniversalFormatSettings ));
+        '      <raw-value value="%g" />' + LE, [item.Value], UniversalFormatSettings));
+      if hasTrans then
+      begin
+        valTrans := Transform(item.Value, flags);
+        if flags = tfOK then
+          AppendToStream(stream, Format(
+            '        <transformed-value="&g" />' + LE, [valTrans], UniversalFormatSettings ));
+      end;
       if item.Comment <> '' then
         AppendToStream(stream,
-            '<comment>' +
-              UTF8TextToXMLText(item.Comment) +
-            '</comment>' );
+          '      <comment>' + LE +
+                   UTF8TextToXMLText(item.Comment) + LE +
+          '      </comment>' + LE);
       AppendToStream(stream,
-          '</item>');
+          '</item>' + LE);
     end;
 
     AppendToStream(stream,
-        '</raw-data>');
+        '  </values>' + LE);
     AppendToStream(stream,
       '</measurement>');
 

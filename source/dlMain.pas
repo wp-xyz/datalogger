@@ -256,7 +256,7 @@ uses
   fpsTypes,
   TAChartUtils, TADrawerSVG, TADrawUtils, TADrawerCanvas, TAChartAxis,
   VC820Device, VC830Device,
-  dlUtils, dlSerialPortSettings, dlTransformations,
+  dlUtils, dlSerialPortSettings, dlTransformation, dlTransformations,
   dlRemoveCurveDialog, dlTimeOffsetDialog, dlMeasSettingsDialog,
   dlSeriesStyleEditor;
 
@@ -494,6 +494,12 @@ begin
   else
     exit;
 
+  if (data = nil) or (data.Count = 0) then
+  begin
+    MessageDlg('No data to save.', mtInformation, [mbOK], 0);
+    exit;
+  end;
+  
   case AcFileSaveAs.Dialog.FilterIndex of
     XML_FILTERINDEX:
       data.SaveAsXMLFile(AcFileSaveAs.Dialog.FileName);
@@ -657,25 +663,10 @@ end;
 procedure TMainForm.AcTransformationsExecute(Sender : TObject);
 var
   F : TTransformationForm;
-  {%H-}ini : TCustomIniFile;
-  {%H-}i : integer;
 begin
   F := TTransformationForm.Create(nil);
   try
-    if F.ShowModal = mrOK then begin
-      {
-      ini := CreateGlobalIni;
-      try
-        ReadTransformations(ini);
-        if i >= CbTransformation.Items.Count then
-          i := 0;
-        CbTransformation.ItemIndex := i;
-        SelectTransformation(i);
-      finally
-        ini.Free;
-      end;
-      }
-    end;
+    F.ShowModal;
   finally
     F.Free;
   end;
@@ -870,6 +861,7 @@ begin
   AItem.Text := data.Items[AIndex].Comment;
 end;
 
+
 procedure TMainForm.DataGridDrawCell(Sender: TObject; aCol, aRow: Integer;
   aRect: TRect; aState: TGridDrawState);
 var
@@ -982,6 +974,8 @@ procedure TMainForm.FormCreate(Sender:TObject);
 begin
   FRunning := false;
 
+  TransformationList := TTransformationList.Create;
+  
   FMeasData := TDataList.Create;
   FMeasData.Series := MeasSeries;
   FMeasData.TimeOffset := 0;
@@ -1043,7 +1037,8 @@ end;
 procedure TMainForm.FormDestroy(Sender:TObject);
 begin
   FreeAndNil(FSerialDevice);
-  FreeAndNil(FDataList);  // damit wird auch FMeasData gelöscht
+  FreeAndNil(FDataList);  // destroying also FMeasData
+  FreeAndNil(TransformationList);
 end;
 
 
@@ -1219,7 +1214,6 @@ begin
     end;
 end;
 
-
 procedure TMainForm.Loaded;
 begin
   inherited;
@@ -1341,10 +1335,12 @@ begin
   try
     data := TDataList.Create;
     try
+      SelectTransformation(MeasSettings.Transformation, data);
+
       ext := ExtractFileExt(AFileName);
       case Lowercase(ext) of
-        '.xml' : data.LoadFromXMLFile(AFileName);
-        '.txt' : data.LoadFromTextFile(AFileName);
+        '.xml': data.LoadFromXMLFile(AFileName);
+        '.txt': data.LoadFromTextFile(AFileName);
       end;
 
       if (data.Count > 0) then begin
@@ -1527,6 +1523,7 @@ begin
     ini := CreateGlobalIni;
     try
       PresetList.ReadFromIni(ini, DEVICES_SCT);
+      TransformationList.ReadFromIni(ini);
     finally
       ini.Free;
     end;
@@ -1599,13 +1596,6 @@ begin
         Interval := ini.ReadFloat(key, 'Interval', Interval);
         Transformation := ini.ReadString(key, 'Transformation', Transformation);
         SelectTransformation(Transformation, FMeasData);
-        {
-        if Transformation = '' then
-          CbTransformation.ItemIndex := 0
-        else
-          CbTransformation.ItemIndex := CbTransformation.Items.Indexof(Transformation);
-        CbTransformationChange(nil);
-        }
         SetDataMode(TDataMode(ini.ReadInteger(key, 'DataMode', ord(dmRaw))));
         SetTimeUnits(TTimeUnits(ini.ReadInteger(key, 'TimeUnits', ord(tuSeconds))));
         for i:=0 to 2 do
@@ -1644,18 +1634,6 @@ begin
               Format('Series%d_SymbolColor', [i+1]), ord(SymbolColor)));
           end;
       end;
-
-                                                                                              (*
-      SetSeriesStyle(TSeriesStyle(ini.ReadInteger('DiagramSettings', 'SeriesStyle', ord(ssLines))));
-      if CbTransformation.ItemIndex = 0 then
-        SetLogarithmic(ini.Readbool('DiagramSettings', 'Logarithmic', DiagramSettings.Logarithmic));
-        // Logarithmic setting of transformation is stored in transformation record.
-      SetFullGrids(ini.ReadBool('DiagramSettings', 'FullGrids', DiagramSettings.FullGrids));
-      SetLegendPosition(
-        TLegendAlignment(ini.ReadInteger('DiagramSettings', 'LegendPosition', ord(laTopRight))),
-        ini.ReadBool('DiagramSettings', 'LegendOutside', false)
-      );
-            *)
     finally
       ini.Free;
     end;
@@ -1713,7 +1691,7 @@ var
   L : TStringList;
   s : string;
   sf : string;
-  parser: TDataParser;
+  parser: TTransformationParser;
   x1,x2: Double;
 begin
   Assert(AData <> nil);
@@ -1735,7 +1713,7 @@ begin
         L.DelimitedText := s;
         s := L.Values['Expression'];
         if s <> '' then begin
-          parser := TDataParser.Create(nil);
+          parser := TTransformationParser.Create(nil);
           try
             try
               parser.Expression := s;
@@ -1807,12 +1785,24 @@ begin
         s := FMeasData.RawQuantName;
         u := FMeasData.RawUnits;
         SetLogarithmic(false);
+        Chart.LeftAxis.Range.UseMin := false;
+        Chart.LeftAxis.Range.UseMax := false;
       end;
     dmTransformed :
       begin
         s := FMeasData.TransQuantName;
         u := FMeasData.TransUnits;
         SetLogarithmic(FMeasData.TransLog);
+        if not IsNaN(FMeasData.TransMaxOut) then
+        begin
+          Chart.LeftAxis.Range.Max := FMeasData.TransMaxOut;
+          Chart.LeftAxis.Range.UseMax := true;
+        end;
+        if not IsNaN(FMeasData.TransMinOut) then
+        begin
+          Chart.LeftAxis.Range.Min := FMeasData.TransMinOut;
+          Chart.LeftAxis.Range.UseMin := true;
+        end;
     end;
   end;
 
@@ -2128,12 +2118,12 @@ begin
         Marks.Source := nil;
    //     Intervals.Options := Intervals.Options - [aipGraphCoords]; //, aipUseMaxLength];
         Intervals.Options := Intervals.Options + [aipGraphCoords]; // - [aipUseMaxLength];
-        Intervals.MaxLength := 150;
+        Intervals.MaxLength := 120;
         Intervals.MinLength := 20;
 //        Intervals.NiceSteps := Format('%g|%g|%g', [log10(0.2), log10(0.5), log10(1.0)]);
         if Minors.Count > 0 then
           Minors[0].Intervals.Count := 4;
-        Intervals.Tolerance := 50;
+        Intervals.Tolerance := 30;
       end;
     end else begin
       Marks.Source := nil;
