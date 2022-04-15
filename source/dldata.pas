@@ -266,6 +266,7 @@ begin
     
     SelectTransformation(MeasSettings.Transformation); 
   finally
+    L.Free;
     CloseFile(F);
   end;
 end;
@@ -278,7 +279,7 @@ var
   measnode: TDOMNode;
   node: TDOMNode;
   itemnode, valuenode: TDOMNode;
-  doc: TXMLDocument;
+  doc: TXMLDocument = nil;
   nodename: String;
   s, sComment: String;
   t, x: Double;
@@ -289,74 +290,79 @@ begin
   FMeasDate := UNDEFINED_DATE;
   FRawMultiplier := 1.0;
 
-  ReadXMLFile(doc, AFileName);
-  node := doc.FirstChild;
-  while (node <> nil) do begin
-    nodeName := node.NodeName;
-    if nodeName <> 'measurement' then begin
-      node := node.NextSibling;
-      continue;
-    end;
-    measnode := node;
-    break;
-  end;
-
-  node := measnode.FirstChild;
-  while node <> nil do begin
-    nodename := node.NodeName;
-
-    // Read values
-    if (nodename = 'raw-data') or (nodename = 'values') then begin
-      FRawQuantName := GetAttrValue(node, 'name');
-      FRawUnits := GetAttrValue(node, 'units');
-      s := GetAttrValue(node, 'multiplier');
-      if (s <> '') and TryStrToFloat(s, x, UniversalFormatSettings) then
-        FRawMultiplier := x; 
-      s := GetAttrValue(measnode, 'start-datetime');
-      if s <> '' then
-        FMeasDate := StrToDate(s);
-      s := GetAttrValue(measnode, 'time-units');
-      if s <> '' then
-        for tu in TTimeUnits do
-          if TIME_UNITS[tu] = s then begin
-            FTimeUnits := tu;
-            break;
-          end;
-
-      itemnode := node.Firstchild;
-      while itemnode <> nil do begin
-        nodename := itemnode.NodeName;
-        if nodename = 'item' then begin
-          valuenode := itemnode.FirstChild;
-          t := NaN;
-          x := NaN;
-          sComment := '';
-          while valuenode <> nil do begin
-            nodename := valuenode.NodeName;
-            if nodename = 'time' then begin
-              s := GetAttrValue(valuenode, 'value');
-              if (s = '') or not TryStrToFloat(s, t, UniversalFormatSettings) then 
-                t := NaN;
-            end;
-            if (nodename = 'value') or (nodename = 'raw-value') then begin
-              s := GetAttrValue(valuenode, 'value');
-              if (s = '') or not TryStrToFloat(s, x, UniversalFormatSettings) then 
-                x := NaN;
-            end;
-            if nodename = 'comment' then
-              sComment := valuenode.NodeValue;
-            valuenode := valuenode.NextSibling;
-          end;
-          if not IsNaN(t) then
-            AddValue(t, x, sComment);
-        end;
-        itemnode := itemnode.NextSibling;
+  try
+    ReadXMLFile(doc, AFileName);
+    node := doc.FirstChild;
+    while (node <> nil) do begin
+      nodeName := node.NodeName;
+      if nodeName <> 'measurement' then begin
+        node := node.NextSibling;
+        continue;
       end;
+      measnode := node;
+      break;
     end;
-    node := node.NextSibling;
+
+    node := measnode.FirstChild;
+    while node <> nil do begin
+      nodename := node.NodeName;
+
+      // Read values
+      if (nodename = 'raw-data') or (nodename = 'values') then begin
+        FRawQuantName := GetAttrValue(node, 'name');
+        FRawUnits := GetAttrValue(node, 'units');
+        s := GetAttrValue(node, 'multiplier');
+        if (s <> '') and TryStrToFloat(s, x, UniversalFormatSettings) then
+          FRawMultiplier := x;
+        s := GetAttrValue(measnode, 'start-datetime');
+        if s <> '' then
+          FMeasDate := StrToDate(s);
+        s := GetAttrValue(measnode, 'time-units');
+        if s <> '' then
+          for tu in TTimeUnits do
+            if TIME_UNITS[tu] = s then begin
+              FTimeUnits := tu;
+              break;
+            end;
+
+        itemnode := node.Firstchild;
+        while itemnode <> nil do begin
+          nodename := itemnode.NodeName;
+          if nodename = 'item' then begin
+            valuenode := itemnode.FirstChild;
+            t := NaN;
+            x := NaN;
+            sComment := '';
+            while valuenode <> nil do begin
+              nodename := valuenode.NodeName;
+              if nodename = 'time' then begin
+                s := GetAttrValue(valuenode, 'value');
+                if (s = '') or not TryStrToFloat(s, t, UniversalFormatSettings) then
+                  t := NaN;
+              end;
+              if (nodename = 'value') or (nodename = 'raw-value') then begin
+                s := GetAttrValue(valuenode, 'value');
+                if (s = '') or not TryStrToFloat(s, x, UniversalFormatSettings) then
+                  x := NaN;
+              end;
+              if nodename = 'comment' then
+                sComment := valuenode.NodeValue;
+              valuenode := valuenode.NextSibling;
+            end;
+            if not IsNaN(t) then
+              AddValue(t, x, sComment);
+          end;
+          itemnode := itemnode.NextSibling;
+        end;
+      end;
+      node := node.NextSibling;
+    end;
+
+    SelectTransformation(MeasSettings.Transformation);
+
+  finally
+    doc.Free;
   end;
-  
-  SelectTransformation(MeasSettings.Transformation);
 end;
 
 
