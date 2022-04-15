@@ -67,7 +67,7 @@ type
     procedure FormDestroy(Sender: TObject);
   private
     { private declarations }
-    Presets: TSerPresetList;
+    FPresets: TSerPresetList;
     FPrevPresetItem: TSerPresetItem;
     FPrevIndex: integer;
     function  GetBaudrate: integer;
@@ -131,7 +131,7 @@ end;
 { TSerPresetList }
 
 procedure TSerPresetList.AddDefault(const AName: string;
-  const Presets:TDevicePresets);
+  const Presets: TDevicePresets);
 var
   item: TSerPresetItem;
 begin
@@ -251,10 +251,10 @@ var
   item : TSerPresetItem;
 begin
   if FPrevIndex <> -1 then begin
-    Presets[FPrevIndex].Assign(FPrevPresetItem);
+    FPresets[FPrevIndex].Assign(FPrevPresetItem);
   end;
 
-  item := Presets[CbDevice.ItemIndex];
+  item := FPresets[CbDevice.ItemIndex];
   SetBaudrate(item.BaudRate);
   SetDataBits(item.DataBits);
   SetStopBits(item.StopBits);
@@ -287,7 +287,7 @@ begin
   if CanClose then begin
     ini := CreateGlobalIni;
     try
-      Presets.WriteToIni(ini, DEVICES_SCT);
+      FPresets.WriteToIni(ini, DEVICES_SCT);
     finally
       ini.Free;
     end;
@@ -300,30 +300,30 @@ var
   i: integer;
   L: TStrings;
 begin
-  Presets := TSerPresetList.Create;
+  FPresets := TSerPresetList.Create;
 
   ini := CreateGlobalIni;
   try
-    Presets.ReadFromIni(ini, DEVICES_SCT);
+    FPresets.ReadFromIni(ini, DEVICES_SCT);
   finally
     ini.Free;
   end;
 
-  if Presets.Count = 0 then begin
-    Presets.AddDefault('Conrad VC630', VC630Presets);
-    Presets.AddDefault('Conrad VC820', VC820_840Presets);
-    Presets.AddDefault('Conrad VC830', VC830_850Presets);
-    Presets.AddDefault('Conrad VC840', VC820_840Presets);
-    Presets.AddDefault('Conrad VC850', VC830_850Presets);
-    Presets.AddDefault('user-defined', OtherPresets);
+  if FPresets.Count = 0 then begin
+    FPresets.AddDefault('Conrad VC630', VC630Presets);
+    FPresets.AddDefault('Conrad VC820', VC820_840Presets);
+    FPresets.AddDefault('Conrad VC830', VC830_850Presets);
+    FPresets.AddDefault('Conrad VC840', VC820_840Presets);
+    FPresets.AddDefault('Conrad VC850', VC830_850Presets);
+    FPresets.AddDefault('user-defined', OtherPresets);
   end;
 
   FPrevPresetItem := TSerPresetItem.Create;
   FPrevIndex := -1;
 
   CbDevice.Items.Clear;
-  for i:=0 to Presets.Count-1 do
-    CbDevice.Items.Add(Presets[i].Name);
+  for i:=0 to FPresets.Count-1 do
+    CbDevice.Items.Add(FPresets[i].Name);
 
   L := TStringList.Create;
   try
@@ -339,7 +339,8 @@ end;
 
 procedure TSerPortForm.FormDestroy(Sender: TObject);
 begin
-  Presets.Free;
+  FPrevPresetItem.Free;
+  FPresets.Free;
 end;
 
 function TSerPortForm.GetBaudrate: integer;

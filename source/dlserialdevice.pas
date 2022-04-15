@@ -451,6 +451,8 @@ procedure TSerialDevice.Disconnect;
 begin
   if FThread <> nil then begin
     FThread.Terminate;
+    FThread.OnDataAvail := nil;
+    FThread.OnError := nil;
     if Assigned(FOnDisconnect) then
       FOnDisconnect(self);
   end;

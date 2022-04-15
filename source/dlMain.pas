@@ -179,6 +179,7 @@ type
     procedure Disconnect;
     function GetMeasInterval(ATime, AValue: Double): Double;
     procedure OnDataHandler(Sender: TObject; Decoder: TSerialDecoder);
+    procedure OnDisconnectHandler(Sender: TObject);
     procedure OnErrorHandler(Sender: TObject; APortStatus: Integer);
     procedure ProcessValue(ATime: TDateTime; AValue: Double);
     procedure SetSerialParams;
@@ -817,6 +818,7 @@ begin
   );
   FSerialDevice.OnData := @OnDataHandler;
   FSerialDevice.OnError := @OnErrorHandler;
+  FSerialDevice.OnDisconnect := @OnDisconnectHandler;
 
   Result := FSerialDevice.Connected;
   if Result then
@@ -953,7 +955,6 @@ begin
   SetLedDisplayNumDigits(DeviceSettings.Digits);
 end;
 
-
 procedure TMainForm.FormCloseQuery(Sender:TObject; var CanClose:boolean);
 var
   res: Integer;
@@ -965,7 +966,13 @@ begin
   if CanClose then
   begin
     if (FSerialDevice <> nil) and FSerialDevice.Connected then 
+    begin
       FSerialDevice.Disconnect;
+      repeat
+        Application.ProcessMessages;
+        Sleep(100);
+      until not FSerialDevice.Connected;
+    end;
     if AcAutoSaveSettings.Checked then
       WriteToIni;
   end;
@@ -1245,6 +1252,9 @@ var
   end;
 
 begin
+  if not FRunning then
+    exit;
+  
   if Decoder.Status = sdrOK then begin
     t := now();
     if (t - FPrevTime < MeasSettings.Interval/SECONDS_PER_DAY) then
@@ -1302,6 +1312,12 @@ begin
     FPrevTime := t;
   end else
     StatusBar.SimpleText := Format('Decoder error %d', [Decoder.Status]);
+end;
+
+
+procedure TMainForm.OnDisconnectHandler(Sender: TObject);
+begin
+  FRunning := false;
 end;
 
 
@@ -1678,6 +1694,7 @@ var
   ser: TChartSeries;
 begin
   MeasSettings.Transformation := AName;
+  FMeasData.SelectTransformation(AName);
   SetupGrid;
   for i := 0 to Chart.SeriesCount-1 do begin
     if (Chart.Series[i] is TChartSeries) then
