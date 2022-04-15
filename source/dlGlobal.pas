@@ -11,6 +11,7 @@ const
   //EMPTYNUMBER = -9.999;
   OVRLOAD = 99999;
   UNDEFINED_NUMBER = 1E308;
+  UNDEFINED_DATE = -1;
 
   DEVICES_SCT = 'Devices';
 

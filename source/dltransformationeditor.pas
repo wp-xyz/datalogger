@@ -9,22 +9,7 @@ uses
   ExtCtrls, StdCtrls, dlTransformation;
 
 type
-
   TEditMode = (emNew, emEdit);
-                   {
-  TTransformation = class
-  public
-    TransformationName : string;
-    MeasName : string;
-    MeasUnits : string;
-    Expression : string;
-    Logarithmic : boolean;
-    MaxIn, MinIn : double;
-    MaxOut, MinOut : double;
-    constructor Create;
-    procedure Assign(T: TTransformation);
-  end;              }
-
 
   { TTransformationEditor }
 
@@ -69,6 +54,7 @@ type
 var
   TransformationEditor: TTransformationEditor;
 
+  
 implementation
 
 {$R *.lfm}
@@ -77,31 +63,6 @@ uses
   Math,
   dlGlobal, dlUtils;
 
-(*
-{ TTransformation }
-
-constructor TTransformation.Create;
-begin
-  inherited Create;
-  MaxIn := nan;
-  MinIn := nan;
-  MaxOut := nan;
-  MinOut := nan;
-end;
-
-procedure TTransformation.Assign(T:TTransformation);
-begin
-  TransformationName := T.TransformationName;
-  MeasName := T.MeasName;
-  Expression := T.Expression;
-  MeasUnits := T.MeasUnits;
-  Logarithmic := T.Logarithmic;
-  MaxIn := T.MaxIn;
-  MinIn := T.MinIn;
-  MaxOut := T.MaxOut;
-  MinOut := T.MinOut;
-end;
-*)
 
 { TTransformationEditor }
 

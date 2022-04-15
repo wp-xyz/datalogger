@@ -17,7 +17,7 @@ uses
   // other
   synaser, MRUManager,
   // project
-  dlGlobal, dlData, dlSerialDevice, dlLEDCtrl;
+  dlGlobal, dlData, dlSerialDevice, dlLEDCtrl, dlTransformation;
 
 type
   { TMainForm }
@@ -189,9 +189,9 @@ type
     { Transformations }
     FShowTransformedValues: Boolean;
     function GetDataMode: TDataMode;
-    procedure ReadTransformations(ini: TCustomIniFile; AList: TStrings);
-    procedure SelectTransformation(AName: String; AData: TDataList);
+    procedure SelectTransformation(const AName: String);
     procedure SetDataMode(AValue: TDataMode);
+    procedure UpdateDataMode;
 
   private
     { Display & Chart }
@@ -235,10 +235,9 @@ type
   private
     { Misc }
     procedure UpdateCmdStates;
-    procedure UpdateDataMode;
 
   protected
-    procedure Loaded; override;
+    //
 
   public
     procedure BeforeRun;
@@ -256,7 +255,7 @@ uses
   fpsTypes,
   TAChartUtils, TADrawerSVG, TADrawUtils, TADrawerCanvas, TAChartAxis,
   VC820Device, VC830Device,
-  dlUtils, dlSerialPortSettings, dlTransformation, dlTransformations,
+  dlUtils, dlSerialPortSettings, dlTransformations,
   dlRemoveCurveDialog, dlTimeOffsetDialog, dlMeasSettingsDialog,
   dlSeriesStyleEditor;
 
@@ -325,9 +324,10 @@ procedure TMainForm.AcApplyTransformationExecute(Sender: TObject);
 var
   P: TDataList;
 begin
+  SelectTransformation(MeasSettings.Transformation);
+  
   P := TDataList(CbFiles.Items.Objects[CbFiles.ItemIndex]);
   if P <> nil then begin
-    SelectTransformation(MeasSettings.Transformation, P);
     SetupGrid;
     (P.Series.Source as TUserDefinedChartSource).Reset;
   end;
@@ -519,6 +519,7 @@ begin
   end;
 end;
 
+
 procedure TMainForm.AcMeasurementSettingsExecute(Sender: TObject);
 var
   F: TMeasSettingsForm;
@@ -526,7 +527,7 @@ begin
   F := TMeasSettingsForm.Create(nil);
   try
     if F.ShowModal = mrOK then
-      SelectTransformation(MeasSettings.Transformation, FMeasData);
+      SelectTransformation(MeasSettings.Transformation);
   finally
     F.Free;
   end;
@@ -1115,7 +1116,7 @@ end;
 
 function TMainForm.GetDataMode : TDataMode;
 begin
-  if AcDiagramTransformedData.Checked then
+  if (AcDiagramTransformedData.Checked) and (MeasSettings.Transformation <> '') then
     result := dmTransformed
   else
     result := dmRaw;
@@ -1214,12 +1215,6 @@ begin
     end;
 end;
 
-procedure TMainForm.Loaded;
-begin
-  inherited;
-//  SetLedDisplayNumDigits(FDeviceSettings.Digits);
-end;
-
 
 procedure TMainForm.MRUMenuManagerRecentFile(Sender: TObject;
   const AFileName: string);
@@ -1309,6 +1304,7 @@ begin
     StatusBar.SimpleText := Format('Decoder error %d', [Decoder.Status]);
 end;
 
+
 procedure TMainForm.OnErrorHandler(Sender: TObject; APortStatus: Integer);
 var
   s: String;
@@ -1335,8 +1331,6 @@ begin
   try
     data := TDataList.Create;
     try
-      SelectTransformation(MeasSettings.Transformation, data);
-
       ext := ExtractFileExt(AFileName);
       case Lowercase(ext) of
         '.xml': data.LoadFromXMLFile(AFileName);
@@ -1381,6 +1375,8 @@ begin
         PopulateFilesCombo;
         CbFiles.ItemIndex := FDataList.Count-1;
         CbFilesSelect(nil);
+
+        SelectTransformation(MeasSettings.Transformation);
 
         UpdateCmdStates;
         Statusbar.Panels[MOUSE_PANEL].Text := SMouseInfo;
@@ -1595,7 +1591,7 @@ begin
       with MeasSettings do begin
         Interval := ini.ReadFloat(key, 'Interval', Interval);
         Transformation := ini.ReadString(key, 'Transformation', Transformation);
-        SelectTransformation(Transformation, FMeasData);
+        SelectTransformation(Transformation);
         SetDataMode(TDataMode(ini.ReadInteger(key, 'DataMode', ord(dmRaw))));
         SetTimeUnits(TTimeUnits(ini.ReadInteger(key, 'TimeUnits', ord(tuSeconds))));
         for i:=0 to 2 do
@@ -1644,15 +1640,6 @@ begin
 end;
 
 
-procedure TMainForm.ReadTransformations(ini:TCustomIniFile; AList: TStrings);
-begin
-  Assert(AList <> nil);
-  AList.Clear;
-  ini.ReadSection('Transformations', AList);
-  AList.Insert(0, '(none)');
-end;
-
-
 procedure TMainForm.SaveChart(const AFileName: String);
 var
   ext: String;
@@ -1685,87 +1672,22 @@ begin
 end;
 
 
-procedure TMainForm.SelectTransformation(AName: String; AData: TDataList);
+procedure TMainForm.SelectTransformation(const AName: String);
 var
-  ini : TCustomIniFile;
-  L : TStringList;
-  s : string;
-  sf : string;
-  parser: TTransformationParser;
-  x1,x2: Double;
+  i: Integer;
+  ser: TChartSeries;
 begin
-  Assert(AData <> nil);
-
   MeasSettings.Transformation := AName;
-  AData.TransMaxIn := NaN;
-  AData.TransMinIn := NaN;
-  AData.TransMaxOut := NaN;
-  AData.TransMinOut := NaN;
-  if AName <> '' then begin
-    ini := CreateGlobalIni;
-    L := TStringList.Create;
-    try
-      s := trim(ini.ReadString('Transformations', MeasSettings.Transformation, ''));
-      if (s <> '') and (s[1] = '(') then Delete(s, 1, 1);
-      if (s <> '') and (s[Length(s)] = ')') then Delete(s, Length(s), 1);
-      if s <> '' then begin
-        L.Delimiter := ';';
-        L.DelimitedText := s;
-        s := L.Values['Expression'];
-        if s <> '' then begin
-          parser := TTransformationParser.Create(nil);
-          try
-            try
-              parser.Expression := s;
-            except
-              on E:Exception do begin
-                MessageDlg(Format('Error in expression: %s', [E.Message]), mtError, [mbOK], 0);
-                parser.Expression := '';
-                s := '';
-              end;
-            end;
-          finally
-            parser.Free;
-          end;
-
-          AData.TransQuantName := L.Values['MeasName'];
-          AData.TransUnits := L.Values['MeasUnits'];
-          AData.TransLog := SameText(L.Values['Logarithmic'], 'True');
-
-          sf := L.Values['MinIn'];
-          if sf <> '' then x1 := StrToFloat(sf, UniversalFormatSettings) else x1 := NaN;
-          sf := L.Values['MaxIn'];
-          if sf <> '' then x2 := StrToFloat(sf, UniversalFormatSettings) else x2 := NaN;
-          PutInOrder(x1, x2);
-          AData.TransMinIn := x1;
-          AData.TransMaxIn := x2;
-
-          sf := L.Values['MinOut'];
-          if sf <> '' then x1 := StrToFloat(sf, UniversalFormatSettings) else x1 := NaN;
-          sf := L.Values['MaxOut'];
-          if sf <> '' then x2 := StrToFloat(sf, UniversalFormatSettings) else x2 := NaN;
-          PutInOrder(x1, x2);
-          AData.TransMinOut := x1;
-          AData.TransMaxOut := x2;
-        end;
-      end;
-      AData.TransExpression := s;
-      if s = '' then
-        MeasSettings.Transformation := '';
-
-      {
-      if s = '' then begin
-        AIndex := 0;
-        CbTransformation.ItemIndex := 0;
-      end;
-      }
-    finally
-      UpdateDataMode;
-//      RgData.Visible := (AIndex > 0);
-      L.Free;
-      ini.Free;
+  SetupGrid;
+  for i := 0 to Chart.SeriesCount-1 do begin
+    if (Chart.Series[i] is TChartSeries) then
+    begin
+      ser := TChartSeries(Chart.Series[i]);
+      if ser.Source is TUserDefinedChartSource then
+        TUserDefinedChartSource(ser.Source).Reset;
     end;
   end;
+  UpdateDataMode;
 end;
 
 
@@ -1773,37 +1695,42 @@ procedure TMainForm.SetDataMode(AValue: TDataMode);
 var
   s: string;
   u: string;
+  T: TTransformation;
 begin
+  FShowTransformedValues := (AValue = dmTransformed) and (MeasSettings.Transformation <> '');
+  
   AcDiagramRawData.Checked := (AValue = dmRaw);
+  AcDiagramRawData.Enabled := (MeasSettings.Transformation <> '');
   AcDiagramTransformedData.Checked := (AValue = dmTransformed);
+  AcDiagramTransformedData.Enabled := (MeasSettings.Transformation <> '');
 
-  FShowTransformedValues := AcDiagramTransformedData.Checked and (MeasSettings.Transformation <> '');
-
-  case AValue of
-    dmRaw :
-      begin
-        s := FMeasData.RawQuantName;
-        u := FMeasData.RawUnits;
-        SetLogarithmic(false);
-        Chart.LeftAxis.Range.UseMin := false;
-        Chart.LeftAxis.Range.UseMax := false;
-      end;
-    dmTransformed :
-      begin
-        s := FMeasData.TransQuantName;
-        u := FMeasData.TransUnits;
-        SetLogarithmic(FMeasData.TransLog);
-        if not IsNaN(FMeasData.TransMaxOut) then
-        begin
-          Chart.LeftAxis.Range.Max := FMeasData.TransMaxOut;
-          Chart.LeftAxis.Range.UseMax := true;
-        end;
-        if not IsNaN(FMeasData.TransMinOut) then
-        begin
-          Chart.LeftAxis.Range.Min := FMeasData.TransMinOut;
-          Chart.LeftAxis.Range.UseMin := true;
-        end;
+  if FShowTransformedValues then
+  begin
+    T := FMeasData.Transformation;
+    if T = nil then
+      T := TransformationList.Find(MeasSettings.Transformation);
+    if T = nil then
+      raise Exception.Create('Transformation not found.');
+    s := FMeasData.TransQuantName;
+    u := FMeasData.TransUnits;
+    SetLogarithmic(T.Logarithmic);
+    if not IsNaN(T.MaxOut) then
+    begin
+      Chart.LeftAxis.Range.Max := T.MaxOut;
+      Chart.LeftAxis.Range.UseMax := true;
     end;
+    if not IsNaN(T.MinOut) then
+    begin
+      Chart.LeftAxis.Range.Min := T.MinOut;
+      Chart.LeftAxis.Range.UseMin := true;
+    end;
+  end else
+  begin
+    s := FMeasData.RawQuantName;
+    u := FMeasData.RawUnits;
+    SetLogarithmic(false);
+    Chart.LeftAxis.Range.UseMin := false;
+    Chart.LeftAxis.Range.UseMax := false;
   end;
 
   if u = '' then

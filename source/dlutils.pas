@@ -22,6 +22,7 @@ function  GetStopBits(AValue: double): Integer;
 
 function  GetHandshakeString(ACode: Integer): String;
 
+function  IsEmptyDate(AValue: TDateTime): Boolean;
 function  IsEmptyNumber(AValue: Double): Boolean;
 procedure PutInOrder(var x,y:double);
 
@@ -136,6 +137,11 @@ begin
     hHardware: Result := 'hardware';
     hSoftware: Result := 'software';
   end;
+end;
+
+function IsEmptyDate(AValue: TDateTime): Boolean;
+begin
+  Result := AValue <> UNDEFINED_DATE;
 end;
 
 function IsEmptyNumber(AValue: Double): Boolean;

@@ -8,7 +8,7 @@ uses
   Classes, SysUtils, contnrs, laz2_xmlread, laz2_DOM, fpexprpars,
   fpstypes, fpspreadsheet, {%H-}fpsallformats,
   TACustomSeries,
-  dlGlobal;
+  dlGlobal, dlTransformation;
 
 type
   TDataItem = class
@@ -29,29 +29,20 @@ type
     FMaxTime: double;
     FMinValue: Double;
     FMaxValue: Double;
-    FTransQuantName: String;
-    FTransUnits: String;
-    FTransMaxIn: Double;
-    FTransMinIn: Double;
-    FTransMaxOut: Double;
-    FTransMinOut: Double;
-    FTransLog: Boolean;
-    FParser: TFPExpressionParser;
-    FParserVariable: TFPExprIdentifierDef;
+    FTransformation: TTransformation;
     FMeasDate: TDateTime;
     function GetCaption(ATransformedData: Boolean): String;
     function GetItem(AIndex: Integer): TDataItem;
-    function GetTransExpression: String;
+    function GetTransQuantName: String;
+    function GetTransUnits: String;
     procedure SetItem(AIndex: Integer; AValue: TDataitem);
     procedure SetTimeUnits(AValue: TTimeUnits);
-    procedure SetTransExpression(const AValue: String);
 
   protected
     procedure ConvertTimeUnits(ANewUnits: TTimeUnits);
 
   public
     constructor Create;
-    destructor Destroy; override;
     function AddValue(ATime, AValue: Double; const AComment: String = ''): TDataItem;
     function CanSetLogarithmic: boolean;
     procedure Clear;
@@ -64,6 +55,7 @@ type
       AFormat: TsSpreadsheetFormat; ACommentLinesOnly: Boolean = false);
     procedure SaveAsTextFile(const AFileName: String; ACommentLinesOnly: Boolean = false);
     procedure SaveAsXMLFile(const AFileName: String);
+    procedure SelectTransformation(ATransformationName: String);
     function Transform(AValue: Double; out AFlag: TTransformFlag): double;
     property Items[AIndex: Integer]: TDataItem read GetItem write SetItem;
     property Series: TChartSeries read FSeries write FSeries;
@@ -75,14 +67,9 @@ type
     property RawMultiplier: Double read FRawMultiplier write FRawMultiplier;
     property TimeOffset: double read FTimeOffset write FTimeOffset;
     property TimeUnits: TTimeUnits read FTimeUnits write SetTimeUnits;
-    property TransExpression: String read GetTransExpression write SetTransExpression;
-    property TransQuantName: String read FTransQuantName write FTransQuantName;
-    property TransUnits: String read FTransUnits write FTransUnits;
-    property TransMaxIn: Double read FTransMaxIn write FTransMaxIn;
-    property TransMaxOut: Double read FTransMaxOut write FTransMaxOut;
-    property TransMinIn: Double read FTransMinIn write FTransMinIn;
-    property TransMinOut: Double read FTransMinOut write FTransMinOut;
-    property TransLog: Boolean read FTransLog write FTransLog;
+    property Transformation: TTransformation read FTransformation;
+    property TransQuantName: String read GetTransQuantName;
+    property TransUnits: String read GetTransUnits;
   end;
 
 
@@ -91,7 +78,7 @@ implementation
 uses
   Math, StrUtils,
   fpsUtils, fpsXMLCommon,
-  dlUtils, dlTransformation;
+  dlUtils;
 
 
 { Utilities }
@@ -124,15 +111,7 @@ begin
   inherited Create;
   FRawMultiplier := 1.0;
   FTimeOffset := 0.0;
-  FParser := TTransformationParser.Create(nil);
-  FParserVariable := TTransformationParser(FParser).Variable;
   Clear;
-end;
-
-destructor TDataList.Destroy;
-begin
-  FParser.Free;
-  inherited;
 end;
 
 function TDataList.AddValue(ATime, AValue: Double;
@@ -171,36 +150,20 @@ begin
     Items[i].Time := dlUtils.ConvertTimeUnits(Items[i].Time, FTimeUnits, ANewUnits);
   FTimeUnits := ANewUnits;
 end;
-           (*
-procedure TDataList.CopyTransformationFrom(AData: TDataList);
-begin
-  if AData = nil then begin
-    TransExpression := '';
-    TransQuantName := '';
-    TransUnits := '';
-    TransMaxIn := NaN;
-    TransMaxOut := NaN;
-    TransMinIn := NaN;
-    TransMinOut := NaN;
-    TransLog := false;
-  end else begin
-    TransExpression := AData.TransExpression;
-    TransQuantName := AData.TransQuantName;
-    TransUnits := AData.TransUnits;
-    TransMaxIn := AData.TransMaxIn;
-    TransMaxOut := AData.TransMaxOut;
-    TransMinIn := AData.TransMinIn;
-    TransMinOut := AData.TransMinOut;
-    TransLog := AData.TransLog;
-  end;
-end;
-       *)
+
 function TDataList.GetCaption(ATransformedData: Boolean): String;
 begin
-  if ATransformedData then
-    Result := IfThen(FTransUnits = '', FTransQuantName, FTransQuantName + ', ' + FTransUnits)
-  else
-    Result := IfThen(FRawUnits = '', FRawQuantname, FRawQuantName + ', ' + FRawUnits);
+  if ATransformedData and (FTransformation <> nil) then
+  begin
+    Result := FTransformation.MeasName;
+    if FTransformation.MeasUnits <> '' then
+      Result := Result + ', ' + FTransformation.MeasUnits;
+  end else
+  begin
+    Result := FRawQuantName;
+    if FRawUnits <> '' then
+      Result := Result + ', ' + FRawUnits;
+  end;
 end;
 
 function TDataList.GetItem(AIndex: Integer): TDataItem;
@@ -208,9 +171,20 @@ begin
   result := TDataItem(inherited Items[AIndex]);
 end;
 
-function TDataList.GetTransExpression: String;
+function TDataList.GetTransQuantName: String;
 begin
-  Result := FParser.Expression;
+  if HasTransformation then
+    Result := FTransformation.MeasName
+  else
+    Result := '';
+end;
+
+function TDataList.GetTransUnits: String;
+begin
+  if HasTransformation then
+    Result := FTransformation.MeasUnits
+  else
+    Result := '';
 end;
 
 function TDataList.HasComments: Boolean;
@@ -224,7 +198,7 @@ end;
 
 function TDataList.HasTransformation: Boolean;
 begin
-  Result := TransExpression <> '';
+  Result := (FTransformation <> nil) and (FTransformation.Expression <> '');
 end;
 
 { Reads the raw data in a saved text file. Transformed data, if available,
@@ -289,6 +263,8 @@ begin
 
     FFileName := AFileName;
     FTimeUnits := tuSeconds;
+    
+    SelectTransformation(MeasSettings.Transformation); 
   finally
     CloseFile(F);
   end;
@@ -310,6 +286,8 @@ var
 begin
   FFileName := AFileName;
   FTimeUnits := tuSeconds;
+  FMeasDate := UNDEFINED_DATE;
+  FRawMultiplier := 1.0;
 
   ReadXMLFile(doc, AFileName);
   node := doc.FirstChild;
@@ -333,9 +311,7 @@ begin
       FRawUnits := GetAttrValue(node, 'units');
       s := GetAttrValue(node, 'multiplier');
       if (s <> '') and TryStrToFloat(s, x, UniversalFormatSettings) then
-        FRawMultiplier := x 
-      else 
-        FRawMultiplier := 1.0;
+        FRawMultiplier := x; 
       s := GetAttrValue(measnode, 'start-datetime');
       if s <> '' then
         FMeasDate := StrToDate(s);
@@ -379,6 +355,8 @@ begin
     end;
     node := node.NextSibling;
   end;
+  
+  SelectTransformation(MeasSettings.Transformation);
 end;
 
 
@@ -398,7 +376,7 @@ var
 begin
   cTime := 0;
   cRaw := 1;
-  if TransExpression <> '' then begin
+  if HasTransformation then begin
     cTrans := cRaw + 1;
     cComment := cTrans + 1;
   end else begin
@@ -467,7 +445,7 @@ var
   hasTrans: Boolean;
   rawTitle, transTitle: String;
 begin
-  hasTrans := TransExpression <> '';
+  hasTrans := HasTransformation;
   rawTitle := GetCaption(false);
   transTitle := GetCaption(true);
 
@@ -582,60 +560,32 @@ begin
 end;
 
 
+procedure TDataList.SelectTransformation(ATransformationName: String);
+begin
+  FTransformation := TransformationList.Find(ATransformationName);
+end;
+
+
 procedure TDataList.SetItem(AIndex: Integer; AValue: TDataItem);
 begin
   inherited Items[AIndex] := AValue;
 end;
+
 
 procedure TDataList.SetTimeUnits(AValue: TTimeUnits);
 begin
   ConvertTimeUnits(AValue);
 end;
 
-procedure TDataList.SetTransExpression(const AValue: String);
-begin
-  FParser.Expression := AValue;
-end;
 
 function TDataList.Transform(AValue: Double; out AFlag: TTransformFlag): Double;
-var
-  res : TFPExpressionResult;
 begin
-  AFlag := tfOK;
-  if IsEmptyNumber(AValue) then
-    result := AValue
+  if HasTransformation then
+    Result := FTransformation.Transform(AValue, AFlag)
   else
-  if (TransExpression = '') then
-    result := AValue
-  else
-  begin
-    if not IsEmptyNumber(FTransMaxIn) and (AValue > FTransMaxIn) then begin
-      AFlag := tfTooLargeIn;
-      AValue := FTransMaxIn;
-    end
-    else
-    if not IsEmptyNumber(FTransMinIn) and (AValue < FTransMinIn) then begin
-      AFlag := tfTooSmallIn;
-      AValue := FTransMinIn;
-    end;
-    try
-      FParserVariable.AsFloat := AValue;
-      res := FParser.Evaluate;
-      result := res.ResFloat;
-      if not IsEmptyNumber(FTransMaxOut) and (Result > FTransMaxOut) then begin
-        Result := FTransMaxOut;
-        AFlag := tfTooLargeOut;
-      end else
-      if not IsEmptyNumber(FTransMinOut) and (Result < FTransMinOut) then begin
-        Result := FTransMinOut;
-        AFlag := tfTooSmallOut;
-      end;
-    except
-      Result := NaN;
-      AFlag := tfError;
-    end;
-  end;
+    Result := NaN;
 end;
+
 
 end.
 

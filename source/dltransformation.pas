@@ -51,6 +51,8 @@ type
     function GetItem(AIndex: Integer): TTransformation;
     procedure SetItem(AIndex: Integer; AValue: TTransformation);
   public
+    function Find(const ATransformationName: String): TTransformation;
+    function IndexOf(const ATransformationName: String): integer;
     procedure ReadFromIni(ini: TCustomIniFile);
     procedure WriteToIni(ini: TCustomIniFile);
     property Items[AIndex: Integer]: TTransformation read GetItem write SetItem; default;
@@ -157,9 +159,28 @@ end;
 
 { TTransformationList }
 
+function TTransformationList.Find(const ATransformationName: String): TTransformation;
+var
+  idx: Integer;
+begin
+  idx := IndexOf(ATransformationName);
+  if idx > -1 then
+    Result := Items[idx]
+  else
+    Result := nil;
+end;
+
 function TTransformationList.GetItem(AIndex: Integer): TTransformation;
 begin
   Result := TTransformation(inherited Items[AIndex]);
+end;
+
+function TTransformationList.IndexOf(const ATransformationName: String): Integer;
+begin
+  for Result := 0 to Count-1 do
+    if Items[Result].TransformationName = ATransformationName then
+      exit;
+  Result := -1;
 end;
 
 procedure TTransformationList.ReadFromIni(ini: TCustomIniFile);

@@ -58,7 +58,7 @@ implementation
 
 uses
   IniFiles,
-  dlGlobal, dlUtils;
+  dlGlobal, dlUtils, dlTransformation;
 
 
 procedure TMeasSettingsForm.ButtonOKClick(Sender: TObject);
@@ -160,27 +160,17 @@ end;
 
 procedure TMeasSettingsForm.ReadTransformations;
 var
-  ini: TCustomIniFile;
-  List : TStringList;
+  i: Integer;
 begin
-  ini := CreateGlobalIni;
+  CbTransformation.Items.BeginUpdate;
   try
-    List := TStringList.Create;
-    try
-      ini.ReadSection('Transformations', List);
-      List.Insert(0, '(none)');
-      with CbTransformation do begin
-        Items.Assign(List);
-        if MeasSettings.Transformation = '' then
-          ItemIndex := 0
-        else
-          ItemIndex := Items.IndexOf(MeasSettings.Transformation);
-      end;
-    finally
-      List.Free;
-    end;
+    CbTransformation.Items.Clear;
+    CbTransformation.Items.Add('(none)');
+    for i := 0 to TransformationList.Count-1 do
+      CbTransformation.Items.Add(TransformationList[i].TransformationName);
+    CbTransformation.ItemIndex := TransformationList.IndexOf(MeasSettings.Transformation) + 1;
   finally
-    ini.Free;
+    CbTransformation.Items.EndUpdate;
   end;
 end;
 
