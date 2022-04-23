@@ -32,7 +32,7 @@ const
   BUFSIZE = 12;  // should be 14, but #13#10 at the end already has been removed.
 var
   s: AnsiString;
-  i: Integer;
+  i, n: Integer;
 begin
   FSerial.RTS := false;
   FSerial.DTR := true;
@@ -43,7 +43,8 @@ begin
     FStatus := FSerial.LastError;
     if FStatus = 0 then begin
       SetLength(FBuffer, BUFSIZE);
-      for i:=1 to BUFSIZE do
+      if Length(s) < BUFSIZE then n := Length(s) else n := BUFSIZE;
+      for i:=1 to n do
         FBuffer[i-1] := ord(s[i]);
       Synchronize(@DoDataAvail);
     end else

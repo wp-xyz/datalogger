@@ -511,6 +511,8 @@ var
   hasTrans: Boolean;
   flags: TTransformFlag;
 begin
+  hasTrans := HasTransformation;
+  
   stream := TMemoryStream.Create;
   try
     AppendToStream(stream,
@@ -540,7 +542,7 @@ begin
         valTrans := Transform(item.Value, flags);
         if flags = tfOK then
           AppendToStream(stream, Format(
-            '        <transformed-value="&g" />' + LE, [valTrans], UniversalFormatSettings ));
+            '      <transformed-value value="%g" />' + LE, [valTrans], UniversalFormatSettings ));
       end;
       if item.Comment <> '' then
         AppendToStream(stream,
@@ -548,7 +550,7 @@ begin
                    UTF8TextToXMLText(item.Comment) + LE +
           '      </comment>' + LE);
       AppendToStream(stream,
-          '</item>' + LE);
+          '    </item>' + LE);
     end;
 
     AppendToStream(stream,
