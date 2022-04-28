@@ -29,6 +29,7 @@ procedure PutInOrder(var x,y:double);
 function  ConvertFromDateTime(AValue: TDateTime; AUnits: TTimeUnits): Double; inline;
 function  ConvertToDateTime(AValue: Double; AUnits: TTimeUnits): TDateTime; inline;
 function  ConvertTimeUnits(AValue: Double; FromUnits, ToUnits: TTimeUnits): Double;
+function  StrToTimeUnits(s: String): TTimeUnits;
 
 function TrimBrackets(const s: String): String;
 
@@ -182,6 +183,22 @@ begin
     Result := ConvertFromDateTime(ConvertToDateTime(AValue, FromUnits), ToUnits);
 end;
 
+function StrToTimeUnits(s: String): TTimeUnits;
+begin
+  case LowerCase(s) of
+    's', 'sec', 'seconds':
+      Result := tuSeconds;
+    'm', 'min', 'minutes':
+      Result := tuMinutes;
+    'h', 'hr', 'hrs', 'hours':
+      Result := tuHours;
+    'd', 'days':
+      Result := tuDays;
+    else
+      raise Exception.Create('Unknown time units ' + s);
+  end;
+end;
+    
 function TrimBrackets(const s: String): String;
 begin
   Result := s;

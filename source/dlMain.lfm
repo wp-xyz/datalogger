@@ -626,7 +626,7 @@ object MainForm: TMainForm
       Category = 'File'
       Caption = 'Save &as...'
       Dialog.DefaultExt = '.xml'
-      Dialog.Filter = 'DataLogger xml file (*.xml)|*.xml|Old DataLogger text file (*.txt)|*.txt|Exel 97-2003 file (*.xls)|*.xls|Excel2007 file (*.xlsx)|*.xlsx|Open/LibreOffice calc file (*.ods)|*.ods|Comma-separated values (*.csv)|*.csv|Bitmap file (*.bmp)|*.bmp|jpeg graphics  file (*.jpg, *.jpeg)|*.jpg;*.jpeg|png graphics file (*.png)|*.png|svg vector graphics file (*.svg)|*.svg'
+      Dialog.Filter = 'DataLogger xml file (*.xml)|*.xml|DataLogger text file (*.txt)|*.txt|DataLogger comma-separated file (*.csv)|*.csv|Excel 97-2003 file (*.xls)|*.xls|Excel2007 file (*.xlsx)|*.xlsx|Open/LibreOffice calc file (*.ods)|*.ods|Bitmap file (*.bmp)|*.bmp|jpeg graphics  file (*.jpg, *.jpeg)|*.jpg;*.jpeg|png graphics file (*.png)|*.png|svg vector graphics file (*.svg)|*.svg'
       Hint = 'Save As'
       ImageIndex = 1
       OnAccept = AcFileSaveAsAccept
@@ -635,7 +635,7 @@ object MainForm: TMainForm
       Category = 'File'
       Caption = '&Open...'
       Dialog.DefaultExt = '.xml'
-      Dialog.Filter = 'DataLogger xml file (*.xml)|*.xml|DataLogger text file (*.txt)|*.txt'
+      Dialog.Filter = 'DataLogger xml file (*.xml)|*.xml|DataLogger text file (*.txt)|*.txt|DataLogger csv file (*.csv)|*.csv'
       Dialog.Options = [ofFileMustExist, ofEnableSizing, ofViewDetail]
       Hint = 'Open'
       ImageIndex = 0

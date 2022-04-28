@@ -48,7 +48,7 @@ const
      // Bsp. 2    O H M   3 , 9 9 9 M  o  h  m  CR
 
 type
-  TTimeUnits = (tuSeconds, tuMinutes, tuHours);
+  TTimeUnits = (tuSeconds, tuMinutes, tuHours, tuDays);
   TTimeDisplay = (tdNumber, tdDateTime);
 
   TMeasIntervalCondition = (micStart, micTimeAfter, micValueAbove, micValueBelow);
@@ -216,13 +216,13 @@ var
 
 const
   TIME_UNITS : array[TTimeUnits] of String = (
-    'seconds', 'minutes', 'hours'
+    'seconds', 'minutes', 'hours', 'days'
   );
   TIME_CAPTION : array[TTimeUnits] of String = (
-    'Time, s', 'Time, min', 'Time, h'
+    'Time, s', 'Time, min', 'Time, h', 'Days, d'
   );
   TIME_MULTIPLIER : array[TTimeUnits] of Double = (
-    SECONDS_PER_DAY, MINUTES_PER_DAY, HOURS_PER_DAY
+    SECONDS_PER_DAY, MINUTES_PER_DAY, HOURS_PER_DAY, 1.0
   );
 
 

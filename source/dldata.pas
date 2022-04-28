@@ -40,6 +40,7 @@ type
 
   protected
     procedure ConvertTimeUnits(ANewUnits: TTimeUnits);
+    procedure GetQuantNameAndUnits(s: String; var AQuantName, AUnits: String);
 
   public
     constructor Create;
@@ -187,6 +188,42 @@ begin
     Result := '';
 end;
 
+procedure TDataList.GetQuantNameAndUnits(s: String; var AQuantName, AUnits: String);
+var
+  p: Integer;
+begin
+  p := pos(',', s);
+  if p > 0 then
+  begin
+    AQuantName := trim(Copy(s, 1, p-1));
+    AUnits := trim(Copy(s, p+1));
+    exit;
+  end;
+  
+  p := pos('(', s);
+  if p > 0 then
+  begin
+    AQuantName := trim(Copy(s, 1, p-1));
+    AUnits := trim(Copy(s, p+1));
+    if (AUnits <> '') and (AUnits[Length(AUnits)] = ')') then
+      System.Delete(AUnits, Length(AUnits), 1);
+    exit;
+  end;
+  
+  p := pos('[', s);
+  if p > 0 then
+  begin
+    AQuantName := trim(Copy(s, 1, p-1));
+    AUnits := trim(Copy(s, p+1));
+    if (AUnits <> '') and (AUnits[Length(AUnits)] = ']') then
+      System.Delete(AUnits, Length(AUnits), 1);
+    exit;
+  end;
+  
+  AQuantName := s;
+  AUnits := '';
+end;    
+  
 function TDataList.HasComments: Boolean;
 var
   i: Integer;
@@ -207,6 +244,7 @@ procedure TDataList.LoadFromTextFile(const AFileName: String);
 var
   F: TextFile;
   s: string;
+  sUnits: String;
   p: integer;
   x, y: double;
   L: TStringList;
@@ -219,6 +257,9 @@ begin
 
   Clear;
 
+  FFileName := AFileName;
+  FTimeUnits := tuSeconds;
+  
   L := TStringList.Create;
   try
     L.Delimiter:= TAB;
@@ -247,22 +288,11 @@ begin
         hasComment := L.Count > 2;
         commentCol := L.Count-1;
 
-        s := L[1];
-        p := pos(',', s);
-        if p > 0 then
-        begin
-          FRawQuantName := trim(Copy(s, 1, p-1));
-          FRawUnits := trim(Copy(s, p+1, MaxInt));
-        end else
-        begin
-          FRawQuantName := s;
-          FRawUnits := '';
-        end;
+        GetQuantNameAndUnits(L[0], s, sUnits);
+        FTimeUnits := StrToTimeUnits(sUnits);
+        GetQuantNameAndUnits(L[1], FRawQuantName, FRawUnits);
       end;
     end;
-
-    FFileName := AFileName;
-    FTimeUnits := tuSeconds;
     
     SelectTransformation(MeasSettings.Transformation); 
   finally

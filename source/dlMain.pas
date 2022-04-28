@@ -264,7 +264,7 @@ resourcestring
   SMouseInfo = 'L-drag/MWheel = zoom, Shift-LDrag = pan, LClick = unzoom, RDrag = read values';
 
 const
-  X_AXIS_GROWTH: Array[TTimeUnits] of Double = (10, 5, 5);
+  X_AXIS_GROWTH: Array[TTimeUnits] of Double = (10, 5, 5, 1);
 
   COUNT_PANEL = 0;
   VALUE_PANEL = 1;
@@ -273,10 +273,10 @@ const
 
   XML_FILTERINDEX  = 1;
   TXT_FILTERINDEX  = 2;
-  XLS_FILTERINDEX  = 3;
-  XLSX_FILTERINDEX = 4;
-  ODS_FILTERINDEX  = 5;
-  CSV_FILTERINDEX  = 6;
+  CSV_FILTERINDEX  = 3;
+  XLS_FILTERINDEX  = 4;
+  XLSX_FILTERINDEX = 5;
+  ODS_FILTERINDEX  = 6;
   BMP_FILTERINDEX  = 7;
   JPG_FILTERINDEX  = 8;
   PNG_FILTERINDEX  = 9;
@@ -504,7 +504,7 @@ begin
   case AcFileSaveAs.Dialog.FilterIndex of
     XML_FILTERINDEX:
       data.SaveAsXMLFile(AcFileSaveAs.Dialog.FileName);
-    TXT_FILTERINDEX:
+    TXT_FILTERINDEX, CSV_FILTERINDEX:
       data.SaveAsTextFile(AcFileSaveAs.Dialog.FileName);
     XLS_FILTERINDEX:
       data.SaveAsSpreadsheetFile(AcFileSaveAs.Dialog.FileName, sfExcel8);
@@ -512,8 +512,10 @@ begin
       data.SaveAsSpreadsheetFile(AcFileSaveAs.Dialog.FileName, sfOOXML);
     ODS_FILTERINDEX:
       data.SaveAsSpreadsheetFile(AcFileSaveAs.Dialog.FileName, sfOpenDocument);
+    {
     CSV_FILTERINDEX:
       data.SaveAsSpreadsheetFile(AcFileSaveAs.Dialog.FileName, sfCSV);
+    }
     BMP_FILTERINDEX, JPG_FILTERINDEX, PNG_FILTERINDEX, SVG_FILTERINDEX:
       if PageControl.ActivePage = PgDiagram then
         SaveChart(AcFileSaveAs.Dialog.FileName);
@@ -1135,14 +1137,14 @@ begin
   case AFilterIndex of
     XML_FILTERINDEX : Result := '.xml';
     TXT_FILTERINDEX : Result := '.txt';
+    CSV_FILTERINDEX : Result := '.csv';
     XLS_FILTERINDEX : Result := '.xls';
     XLSX_FILTERINDEX: Result := '.xlsx';
     ODS_FILTERINDEX : Result := '.ods';
-    CSV_FILTERINDEX : Result := '.csv';
     BMP_FILTERINDEX : Result := '.bmp';
     JPG_FILTERINDEX : Result := '.jpg';
     PNG_FILTERINDEX : Result := '.png';
-    SVG_FILTERINDEX : Result := 'svg';
+    SVG_FILTERINDEX : Result := '.svg';
     else raise Exception.Create('GetDefaultExt: Invalid FilterIndex');
   end;
 end;
@@ -1151,16 +1153,16 @@ end;
 function TMainForm.GetDefaultFilterIndex(Ext: string): Integer;
 begin
   if (Ext = '') then
-    Result := 1
+    Result := XML_FILTERINDEX
   else begin
     if (Ext[1] <> '.') then Ext := '.' + Ext;
     case Lowercase(Ext) of
       '.xml' : Result := XML_FILTERINDEX;
       '.txt' : Result := TXT_FILTERINDEX;
+      '.csv' : Result := CSV_FILTERINDEX;
       '.xls' : Result := XLS_FILTERINDEX;
       '.xlsx': Result := XLSX_FILTERINDEX;
       '.ods' : Result := ODS_FILTERINDEX;
-      '.csv' : Result := CSV_FILTERINDEX;
       '.bmp' : Result := BMP_FILTERINDEX;
       '.jpg',
       '.jpeg': Result := JPG_FILTERINDEX;
@@ -1350,11 +1352,18 @@ begin
       ext := ExtractFileExt(AFileName);
       case Lowercase(ext) of
         '.xml': data.LoadFromXMLFile(AFileName);
-        '.txt': data.LoadFromTextFile(AFileName);
+        '.txt', 
+        '.csv': data.LoadFromTextFile(AFileName);
       end;
 
       if (data.Count > 0) then begin
         data.TimeUnits := MeasSettings.TimeUnits;  // Convert to global time units
+        
+        if FMeasData.RawQuantName = '' then
+        begin
+          FMeasData.RawQuantName := data.RawQuantName;
+          FMeasData.RawUnits := data.RawUnits;
+        end;
 
         chartsource := TUserDefinedChartSource.Create(self);
         chartsource.OnGetChartDataItem := @ChartSourceGetChartDataItem;
@@ -1366,7 +1375,7 @@ begin
         ser.Source := chartsource;
         ApplySeriesSettings(ser, NextPaletteIndex);
         inc(NextPaletteIndex);
-        ser.AxisIndexX := 0;  // x has been move to position 0 to have contiguous y axes.
+        ser.AxisIndexX := 0;  // x has been moved to position 0 to have contiguous y axes.
         ser.AxisIndexY := 1;
         if data.HasComments then begin
           ser.Marks.LinkPen.Color := clGray;
