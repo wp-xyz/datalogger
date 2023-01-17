@@ -26,7 +26,7 @@
 
   You should have received a copy of the GNU Library General Public License
   along with this library; if not, write to the Free Software Foundation,
-  Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+  Inc., 51 Franklin Street - Fifth Floor, Boston, MA 02110-1335, USA.
 }
 unit mrumanager;
 
@@ -104,7 +104,7 @@ Type
     procedure ShowRecentFiles;
   Published
     // Max. items to be kept in the list.
-    Property MaxRecent : Integer Read FMaxRecent write FMaxRecent;
+    Property MaxRecent : Integer Read FMaxRecent write FMaxRecent default 10;
     // Menu item to create a submenu under. Existing items will be removed.
     Property MenuItem : TMenuItem Read FMIRecent Write SetMIRecent;
     // Popupmenu attached to a toolbar button. Existing items will be removed.
@@ -137,7 +137,7 @@ Resourcestring
   SErrFailedToCreateDir = 'Failed to create directory "%s"';
 
 const
-  DEFAULT_MASK = '%d.  %s';
+  DEFAULT_MASK = '%0:d.  %1:s';
 
 function MinimizeFileName(const AFileName:string; AMaxLen:integer) : string;
 
@@ -202,8 +202,11 @@ begin
 end;
 
 procedure TMRUMenuManager.AddToRecent(AFileName : String);
+
 Var
-  J : Integer;
+  I,J : Integer;
+  B : Boolean;
+
 begin
   AFileName:=ExpandFileName(AFileName);
   With FRecent do
@@ -211,8 +214,8 @@ begin
     J:=IndexOf(AFileName);
     If (J<>-1) then
       begin
-      if (J>0) then
-        Exchange(0,J)
+      Delete(J);
+      Insert(0, AFileName);
       end
     else
       begin
@@ -440,6 +443,7 @@ constructor TMRUMenuManager.Create(AOwner: TComponent);
 begin
   inherited Create(AOwner);
   FRecent:=TStringList.Create;
+  FMaxRecent := 10;
   FMaxItemLength := 80;
   FMenuCaptionMask := DEFAULT_MASK;
 end;
@@ -473,7 +477,10 @@ begin
   With (Sender as TRecentMenuItem) do
     FN:=FileName;
   if (FN<>'') and (OnRecentFile<>Nil) then
+    begin
     OnRecentFile(Self,FN);
+    AddToRecent(FN); // Gets moved to the top
+    end;
 end;
 
 end.
