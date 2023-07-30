@@ -175,6 +175,7 @@ type
     FPrevTime: TDateTime;
     FRunning: Boolean;
     FMissing: Integer;
+    FActivated: Boolean;
     function Connect: Boolean;
     procedure Disconnect;
     function GetMeasInterval(ATime, AValue: Double): Double;
@@ -238,10 +239,7 @@ type
     procedure UpdateCmdStates;
 
   protected
-    //
 
-  public
-    procedure BeforeRun;
   end;
 
 var
@@ -713,12 +711,6 @@ begin
 end;
 
 
-procedure TMainForm.BeforeRun;
-begin
-  ReadFromIni;
-end;
-
-
 function TMainForm.CanSetLogarithmic : boolean;
 var
   j : integer;
@@ -954,7 +946,12 @@ end;
 
 procedure TMainForm.FormActivate(Sender: TObject);
 begin
-  SetLedDisplayNumDigits(DeviceSettings.Digits);
+  if not FActivated then
+  begin
+    FActivated := true;
+    ReadFromIni;
+    SetLedDisplayNumDigits(DeviceSettings.Digits);
+  end;
 end;
 
 procedure TMainForm.FormCloseQuery(Sender:TObject; var CanClose:boolean);

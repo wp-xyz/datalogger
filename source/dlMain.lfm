@@ -4,7 +4,7 @@ object MainForm: TMainForm
   Top = 150
   Width = 848
   Caption = 'Data Logger'
-  ClientHeight = 594
+  ClientHeight = 614
   ClientWidth = 848
   Menu = MainMenu
   OnActivate = FormActivate
@@ -12,11 +12,11 @@ object MainForm: TMainForm
   OnCreate = FormCreate
   OnDestroy = FormDestroy
   ShowHint = True
-  LCLVersion = '2.3.0.0'
+  LCLVersion = '3.99.0.0'
   object StatusBar: TStatusBar
     Left = 0
     Height = 23
-    Top = 571
+    Top = 591
     Width = 848
     Panels = <    
       item
@@ -32,7 +32,7 @@ object MainForm: TMainForm
   end
   object PageControl: TPageControl
     Left = 2
-    Height = 467
+    Height = 487
     Top = 102
     Width = 844
     ActivePage = PgTable
@@ -43,11 +43,11 @@ object MainForm: TMainForm
     OnChange = PageControlChange
     object PgDiagram: TTabSheet
       Caption = 'Diagram'
-      ClientHeight = 439
+      ClientHeight = 459
       ClientWidth = 836
       object Chart: TChart
         Left = 4
-        Height = 431
+        Height = 451
         Top = 4
         Width = 645
         AxisList = <        
@@ -128,7 +128,7 @@ object MainForm: TMainForm
       end
       object ChartListbox: TChartListbox
         Left = 662
-        Height = 431
+        Height = 451
         Top = 4
         Width = 170
         Chart = Chart
@@ -141,7 +141,7 @@ object MainForm: TMainForm
       end
       object ChartListboxSplitter: TSplitter
         Left = 653
-        Height = 439
+        Height = 459
         Top = 0
         Width = 5
         Align = alRight
@@ -151,7 +151,7 @@ object MainForm: TMainForm
     end
     object PgTable: TTabSheet
       Caption = 'Table'
-      ClientHeight = 439
+      ClientHeight = 459
       ClientWidth = 836
       object DataGrid: TDrawGrid
         AnchorSideLeft.Control = Panel1
@@ -162,7 +162,7 @@ object MainForm: TMainForm
         AnchorSideBottom.Control = PgTable
         AnchorSideBottom.Side = asrBottom
         Left = 0
-        Height = 405
+        Height = 425
         Top = 34
         Width = 836
         Anchors = [akTop, akLeft, akRight, akBottom]
@@ -224,11 +224,11 @@ object MainForm: TMainForm
     end
     object PgCommunication: TTabSheet
       Caption = 'Communication'
-      ClientHeight = 439
+      ClientHeight = 459
       ClientWidth = 836
       object Memo: TMemo
         Left = 4
-        Height = 408
+        Height = 428
         Top = 27
         Width = 828
         Align = alClient
@@ -415,6 +415,7 @@ object MainForm: TMainForm
       ClientHeight = 42
       ClientWidth = 212
       Color = clBlack
+      ParentBackground = False
       ParentColor = False
       TabOrder = 1
       object PanelValueInfos: TPanel
@@ -426,6 +427,7 @@ object MainForm: TMainForm
         BevelOuter = bvNone
         ClientHeight = 42
         ClientWidth = 50
+        ParentBackground = False
         TabOrder = 0
         object LEDInfoQuant: TLabel
           Left = 0
