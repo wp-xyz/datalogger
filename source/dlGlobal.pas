@@ -117,6 +117,16 @@ type
 
 
 var
+  MTTR01Presets: TDevicePresets = (
+    BaudRate: 2400;
+    DataBits: 8;
+    StopBits: 1.0;
+    Parity: 'N';
+    Handshake: hNone;
+    ReadOut: roAsciiDigits;
+    Digits: 4;
+    Editable: eNone;
+  );
   VC630Presets: TDevicePresets = (
     BaudRate: 4800;
     DataBits: 7;
