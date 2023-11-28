@@ -958,7 +958,7 @@ procedure TMainForm.FormCloseQuery(Sender:TObject; var CanClose:boolean);
 var
   res: Integer;
 begin
-  res := MessageDlg('Do your really want to close this program?',
+  res := MessageDlg('Do you really want to close this program?',
     mtConfirmation, [mbYes, mbNo], 0);
   CanClose := (res = mrYes);
 
