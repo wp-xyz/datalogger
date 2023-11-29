@@ -184,6 +184,7 @@ begin
     AddDefault('Conrad VC830', VC830_850Presets);
     AddDefault('Conrad VC840', VC820_840Presets);
     AddDefault('Conrad VC850', VC830_850Presets);
+    AddDefault('Mercury MTTR01', MTTR01Presets);
 
     for i:=0 to List.Count-1 do begin
       s := ini.ReadString(Section, List[i], '');
@@ -315,6 +316,7 @@ begin
     FPresets.AddDefault('Conrad VC830', VC830_850Presets);
     FPresets.AddDefault('Conrad VC840', VC820_840Presets);
     FPresets.AddDefault('Conrad VC850', VC830_850Presets);
+    FPresets.AddDefault('Mercury MTTR01', MTTR01Presets);
     FPresets.AddDefault('user-defined', OtherPresets);
   end;
 
