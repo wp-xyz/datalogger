@@ -56,7 +56,7 @@ function priv_main
         case ${1} in
             build)
                 priv_pkgsearch
-                priv_packages 'FPSpreadsheet' 'Synapse 40.1'
+                priv_packages 'FPSpreadsheet' 'Synapse40.1'
                 find 'source' -type 'f' -name '*.lpi' \
                     -exec lazbuild --no-write-project --recursive --no-write-project {} 1>&2 +
                 ;;
