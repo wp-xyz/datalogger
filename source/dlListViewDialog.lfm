@@ -6,8 +6,8 @@ object ListViewForm: TListViewForm
   Caption = 'ListViewForm'
   ClientHeight = 327
   ClientWidth = 413
+  LCLVersion = '4.99.0.0'
   OnShow = FormShow
-  LCLVersion = '2.3.0.0'
   object Panel_ListView: TPanel
     Left = 0
     Height = 289

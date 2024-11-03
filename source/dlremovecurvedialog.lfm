@@ -28,9 +28,11 @@ inherited RemoveCurvesForm: TRemoveCurvesForm
     ClientWidth = 512
     inherited BtnOK: TBitBtn
       Left = 352
+      TabOrder = 1
     end
     inherited BtnCancel: TBitBtn
       Left = 424
+      TabOrder = 2
     end
     object CbReassignLineColors: TCheckBox[2]
       AnchorSideLeft.Control = Panel_Buttons
@@ -42,7 +44,7 @@ inherited RemoveCurvesForm: TRemoveCurvesForm
       Width = 126
       BorderSpacing.Left = 6
       Caption = 'Re-assign line colors'
-      TabOrder = 2
+      TabOrder = 0
     end
   end
 end

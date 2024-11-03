@@ -10,12 +10,12 @@ object SerPortForm: TSerPortForm
   Caption = 'Device and serial port settings'
   ClientHeight = 362
   ClientWidth = 326
+  Position = poMainFormCenter
+  LCLVersion = '4.99.0.0'
   OnActivate = FormActivate
   OnCloseQuery = FormCloseQuery
   OnCreate = FormCreate
   OnDestroy = FormDestroy
-  Position = poMainFormCenter
-  LCLVersion = '2.3.0.0'
   object MainPanel: TPanel
     AnchorSideLeft.Control = Owner
     AnchorSideTop.Control = Owner
@@ -260,9 +260,9 @@ object SerPortForm: TSerPortForm
       Items.Strings = (
         ''
       )
-      OnChange = CbDeviceChange
       Style = csDropDownList
       TabOrder = 1
+      OnChange = CbDeviceChange
     end
     object RgHandshake: TRadioGroup
       AnchorSideLeft.Control = CbDevice
@@ -345,7 +345,7 @@ object SerPortForm: TSerPortForm
       Left = 156
       Height = 23
       Top = 217
-      Width = 73
+      Width = 84
       Alignment = taRightJustify
       BorderSpacing.Top = 2
       MaxValue = 6

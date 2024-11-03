@@ -8,7 +8,7 @@ object SeriesStyleEditor: TSeriesStyleEditor
   ClientHeight = 396
   ClientWidth = 287
   Position = poMainFormCenter
-  LCLVersion = '2.3.0.0'
+  LCLVersion = '4.99.0.0'
   object Panel1: TPanel
     Left = 0
     Height = 342
@@ -96,6 +96,7 @@ object SeriesStyleEditor: TSeriesStyleEditor
         Height = 23
         Top = 97
         Width = 58
+        Alignment = taRightJustify
         BorderSpacing.Top = 8
         BorderSpacing.Bottom = 16
         MaxValue = 10
@@ -114,9 +115,9 @@ object SeriesStyleEditor: TSeriesStyleEditor
         BorderSpacing.Left = 16
         BorderSpacing.Top = 8
         Caption = 'Show'
-        OnChange = CbShowLinesChange
         ParentFont = False
         TabOrder = 0
+        OnChange = CbShowLinesChange
       end
       object CbLineStyle: TChartComboBox
         AnchorSideLeft.Control = GbLines
@@ -233,9 +234,9 @@ object SeriesStyleEditor: TSeriesStyleEditor
         BorderSpacing.Left = 16
         BorderSpacing.Top = 8
         Caption = 'Show'
-        OnChange = CbShowSymbolsChange
         ParentFont = False
         TabOrder = 0
+        OnChange = CbShowSymbolsChange
       end
       object CbSymbol: TChartComboBox
         AnchorSideLeft.Control = GbSymbols

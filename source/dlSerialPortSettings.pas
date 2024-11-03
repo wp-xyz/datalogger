@@ -67,6 +67,7 @@ type
     procedure FormDestroy(Sender: TObject);
   private
     { private declarations }
+    FActivated: Boolean;
     FPresets: TSerPresetList;
     FPrevPresetItem: TSerPresetItem;
     FPrevIndex: integer;
@@ -278,7 +279,11 @@ end;
 
 procedure TSerPortForm.FormActivate(Sender: TObject);
 begin
-  Constraints.MinHeight := MainPanel.Height + ButtonPanel.Height;
+  if not FActivated then
+  begin
+    FActivated := true;
+    Constraints.MinHeight := MainPanel.Height + ButtonPanel.Height;
+  end;
 end;
 
 procedure TSerPortForm.FormCloseQuery(Sender: TObject; var CanClose: boolean);

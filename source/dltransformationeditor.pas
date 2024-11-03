@@ -38,9 +38,11 @@ type
     Label4: TLabel;
     Label5: TLabel;
     Label6: TLabel;
+    procedure FormActivate(Sender: TObject);
     procedure OKButtonClick(Sender: TObject);
   private
     { private declarations }
+    FActivated: Boolean;
     FEditMode: TEditMode;
     procedure SetEditMode(AValue: TEditMode);
     function ValidData(out AMsg: String; out AControl: TWinControl): Boolean;
@@ -99,6 +101,17 @@ var
 begin
   if not ValidData(msg, C) then
     ModalResult := mrNone;
+end;
+
+procedure TTransformationEditor.FormActivate(Sender: TObject);
+begin
+  if not FActivated then
+  begin
+    FActivated := true;
+    Constraints.MinHeight := GbDiagram.Top + GbDiagram.Height +
+      GbDiagram.BorderSpacing.Around + GbDiagram.BorderSpacing.Bottom +
+      ButtonPanel1.Height;
+  end;
 end;
 
 

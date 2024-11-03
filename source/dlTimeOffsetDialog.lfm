@@ -36,10 +36,12 @@ inherited TimeOffsetForm: TTimeOffsetForm
     inherited BtnOK: TBitBtn
       Left = 272
       Default = False
+      TabOrder = 1
     end
     inherited BtnCancel: TBitBtn
       Left = 344
       Cancel = False
+      TabOrder = 2
     end
     object EdOffset: TFloatSpinEdit[2]
       AnchorSideLeft.Control = LblTimeOffset
@@ -54,8 +56,8 @@ inherited TimeOffsetForm: TTimeOffsetForm
       BorderSpacing.Right = 8
       MaxValue = 1E308
       MinValue = -1E308
+      TabOrder = 0
       OnChange = EdOffsetChange
-      TabOrder = 2
     end
     object LblTimeOffset: TLabel[3]
       AnchorSideLeft.Control = Panel_Buttons

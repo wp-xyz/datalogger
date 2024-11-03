@@ -37,9 +37,11 @@ type
     procedure CbConditionSelect(Sender: TObject);
     procedure CbIntervalUnitsSelect(Sender: TObject);
     procedure CbUseConditionChange(Sender: TObject);
+    procedure FormActivate(Sender: TObject);
     procedure FormCreate(Sender: TObject);
   private
     { private declarations }
+    FActivated: Boolean;
     procedure ControlsToSettings;
     procedure ReadTransformations;
     procedure SettingsToControls;
@@ -57,9 +59,7 @@ implementation
 {$R *.lfm}
 
 uses
-  IniFiles,
   dlGlobal, dlUtils, dlTransformation;
-
 
 procedure TMeasSettingsForm.ButtonOKClick(Sender: TObject);
 var
@@ -118,6 +118,19 @@ begin
     CbIntervalUnits.Top := EdInterval3.Top;
     LblInterval2Unit.Visible := false;
     LblInterval3Unit.Visible := false;
+  end;
+end;
+
+procedure TMeasSettingsForm.FormActivate(Sender: TObject);
+begin
+  if not FActivated then
+  begin
+    Constraints.MinHeight := GroupBox2.Top + GroupBox2.Height + GroupBox2.BorderSpacing.Around +
+      ButtonPanel1.Height + ButtonPanel1.BorderSpacing.Around * 2;
+    Constraints.MaxHeight := Constraints.MinHeight;
+    Constraints.MinWidth := GroupBox1.Left + GroupBox1.Width + GroupBox1.BorderSpacing.Around -
+     (CbCondition2.Width - InfoCondition1.Width);
+    FActivated := true;
   end;
 end;
 
